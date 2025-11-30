@@ -24,25 +24,25 @@ class classroom(Scene):
         andrew_width, andrew_height = andrew_original.get_size()
         # Scale to 60 pixels tall, maintain aspect ratio
         andrew_scale = 60 / andrew_height
-        self.andrew_sprite = pygame.transform.scale(andrew_original, (int(andrew_width * andrew_scale), 60))
+        self.andrew_sprite = pygame.transform.scale(andrew_original, (int(andrew_width * andrew_scale) / 60 * 110 , 110))
         
         teacher_original = pygame.image.load("assets/teacher.png").convert_alpha()
         teacher_width, teacher_height = teacher_original.get_size()
         # Scale to 70 pixels tall, maintain aspect ratio
         teacher_scale = 70 / teacher_height
-        self.teacher_sprite = pygame.transform.scale(teacher_original, (int(teacher_width * teacher_scale), 70))
+        self.teacher_sprite = pygame.transform.scale(teacher_original, (int(teacher_width * teacher_scale) / 70 * 120, 120))
         
         guy_npc_original = pygame.image.load("assets/guy_npc.png").convert_alpha()
         guy_width, guy_height = guy_npc_original.get_size()
         # Scale to 45 pixels tall, maintain aspect ratio
         guy_scale = 45 / guy_height
-        self.guy_npc_sprite = pygame.transform.scale(guy_npc_original, (int(guy_width * guy_scale), 45))
+        self.guy_npc_sprite = pygame.transform.scale(guy_npc_original, (int(guy_width * guy_scale) / 45 * 80, 80))
         
         girl_npc_original = pygame.image.load("assets/girl_npc.png").convert_alpha()
         girl_width, girl_height = girl_npc_original.get_size()
         # Scale to 45 pixels tall, maintain aspect ratio
         girl_scale = 45 / girl_height
-        self.girl_npc_sprite = pygame.transform.scale(girl_npc_original, (int(girl_width * girl_scale), 45))
+        self.girl_npc_sprite = pygame.transform.scale(girl_npc_original, (int(girl_width * girl_scale)/45 * 80, 80))
         
         # NPC positions next to desks (not on them) and interaction radius
         self.npcs = [

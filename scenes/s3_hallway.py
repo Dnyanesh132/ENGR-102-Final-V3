@@ -15,17 +15,17 @@ class hallway(Scene):
         andrew_original = pygame.image.load("assets/andrew.png").convert_alpha()
         andrew_width, andrew_height = andrew_original.get_size()
         andrew_scale = 60 / andrew_height
-        self.andrew_sprite = pygame.transform.scale(andrew_original, (int(andrew_width * andrew_scale), 60))
+        self.andrew_sprite = pygame.transform.scale(andrew_original, (int(andrew_width * andrew_scale)/60 * 100, 100))
         
         hall_monitor_original = pygame.image.load("assets/hall_monitor.png").convert_alpha()
         monitor_width, monitor_height = hall_monitor_original.get_size()
         monitor_scale = 60 / monitor_height
-        self.hall_monitor_sprite = pygame.transform.scale(hall_monitor_original, (int(monitor_width * monitor_scale), 60))
+        self.hall_monitor_sprite = pygame.transform.scale(hall_monitor_original, (int(monitor_width * monitor_scale)/60 * 100, 100))
         
         principal_son_original = pygame.image.load("assets/principals_son.png").convert_alpha()
         son_width, son_height = principal_son_original.get_size()
         son_scale = 60 / son_height
-        self.principal_son_sprite = pygame.transform.scale(principal_son_original, (int(son_width * son_scale), 60))
+        self.principal_son_sprite = pygame.transform.scale(principal_son_original, (int(son_width * son_scale)/60 * 100, 100))
         
         # Hall monitor position (blocks the way)
         self.hall_monitor_pos = pygame.math.Vector2(500, 360)
@@ -159,10 +159,10 @@ class hallway(Scene):
         if not self.hall_monitor_paid:
             # Add physical block - full width barrier that blocks the entire hallway
             # Position it right in front of the hall monitor to block passage
-            barrier_width = 1280  # Full screen width to block entire hallway
-            barrier_height = 100
+            barrier_width = 100  # Full screen width to block entire hallway
+            barrier_height = 720
             barrier_box = pygame.Rect(
-                0,  # Start from left edge
+                self.hall_monitor_pos.x + 30,  # Start from left edge
                 self.hall_monitor_pos.y - barrier_height // 2,
                 barrier_width,
                 barrier_height
@@ -202,10 +202,10 @@ class hallway(Scene):
         # Draw physical barrier if not paid (full width)
         if not self.hall_monitor_paid:
             # Draw a visible barrier/block spanning full hallway width
-            barrier_width = 1280  # Full screen width
-            barrier_height = 100
+            barrier_width = 100  # Full screen width
+            barrier_height = 700
             barrier_rect = pygame.Rect(
-                0,  # Start from left edge
+                self.hall_monitor_pos.x + 30,  # Start from left edge
                 self.hall_monitor_pos.y - barrier_height // 2,
                 barrier_width,
                 barrier_height

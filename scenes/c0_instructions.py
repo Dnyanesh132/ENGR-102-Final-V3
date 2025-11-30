@@ -53,7 +53,7 @@ class instructions_screen(Scene):
             "title": "Objective",
             "content": [
                 "You and your twin brother are on a mission to earn enough money to buy a PS5…",
-                "by becoming the greatest kindergarten candy dealers of all time.",
+                "by becoming the greatest kindergarten candy sellers of all time.",
                 "",
                 "Play through each school period, win mini-games, avoid teachers and bullies,",
                 "and manage your candy empire like a pro."
@@ -68,18 +68,18 @@ class instructions_screen(Scene):
                 {
                     "title": "Menu Navigation",
                     "content": [
-                        "Mouse Cursor → Move through menu options",
-                        "Left Click → Select",
-                        "ESC → Go back / close windows"
+                        "Mouse Cursor ➡️ Move through menu options",
+                        "Left Click ➡️ Select",
+                        "ESC ➡️  Go back / close windows"
                     ]
                 },
                 {
                     "title": "Start Menu Options",
                     "content": [
-                        "Start New Game – Begin a new day",
-                        "Load Game – Continue your progress",
-                        "Instructions – View how to play",
-                        "Quit Game – Exit to desktop"
+                        "Start New Game - Begin a new day",
+                        "Load Game - Continue your progress",
+                        "Instructions - View how to play",
+                        "Quit Game - Exit to desktop"
                     ]
                 }
             ]
@@ -109,14 +109,14 @@ class instructions_screen(Scene):
             "content": [
                 "Displayed in the top-right corner:",
                 "",
-                "Buyers – How many kids are interested today",
-                "Cash – Your money",
-                "Candy – How much candy you're holding",
+                "Buyers - How many kids are interested today",
+                "Cash - Your money",
+                "Candy - How much candy you're holding",
                 "",
                 "Candy Types:",
-                "  Twizzles – Buy $1 / Sell $2",
-                "  Skizzles – Buy $5 / Sell $9",
-                "  Woozers – Buy $30 / Sell $40",
+                "  Twizzles - Buy $1 / Sell $2",
+                "  Skizzles - Buy $5 / Sell $9",
+                "  Woozers - Buy $30 / Sell $40",
                 "",
                 "Costco gives bulk discounts later in the game."
             ]
@@ -125,7 +125,7 @@ class instructions_screen(Scene):
         # Class Time
         sections.append({
             "type": "section",
-            "title": "1. Class Time (9–11 AM)",
+            "title": "1. Class Time (9-11 AM)",
             "subsections": [
                 {
                     "title": "Goal:",
@@ -160,7 +160,7 @@ class instructions_screen(Scene):
         # Lunch Break
         sections.append({
             "type": "section",
-            "title": "2. Lunch Break (11 AM – 1 PM)",
+            "title": "2. Lunch Break (11 AM - 1 PM)",
             "subsections": [
                 {
                     "title": "Goal:",
@@ -175,7 +175,7 @@ class instructions_screen(Scene):
                         "  2 → Sell Skizzles",
                         "  3 → Sell Woozers",
                         "",
-                        "+ / – → Change how many pieces you sell per deal"
+                        "+ / - → Change how many pieces you sell per deal"
                     ]
                 },
                 {
@@ -194,7 +194,7 @@ class instructions_screen(Scene):
         # Hallway
         sections.append({
             "type": "section",
-            "title": "3. Hallway (1 PM – 3 PM)",
+            "title": "3. Hallway (1 PM - 3 PM)",
             "subsections": [
                 {
                     "title": "Goal:",
@@ -218,10 +218,10 @@ class instructions_screen(Scene):
                 {
                     "title": "Contraband Store Items",
                     "content": [
-                        "Bicycle – Helps your brother use less time traveling",
-                        "Costco Membership – Bulk candy deals",
-                        "Candy Machine – Generates 10 free candy/day",
-                        "Bigger Backpack – Carry more items"
+                        "Bicycle - Helps your brother use less time traveling",
+                        "Costco Membership - Bulk candy deals",
+                        "Candy Machine - Generates 10 free candy/day",
+                        "Bigger Backpack - Carry more items"
                     ]
                 }
             ]
@@ -230,7 +230,7 @@ class instructions_screen(Scene):
         # Brother Mark's Turn
         sections.append({
             "type": "section",
-            "title": "4. Brother Mark's Turn (3 PM – 6 PM)",
+            "title": "4. Brother Mark's Turn (3 PM - 6 PM)",
             "subsections": [
                 {
                     "title": "Goal:",

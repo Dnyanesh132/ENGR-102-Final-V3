@@ -1,8 +1,8 @@
 {
-    "buyers": 2,
-    "money": 0,
+    "buyers": 0,
+    "money": 15,
     "candy": {
-        "twizzlers": 15,
+        "twizzlers": 4,
         "Skizzles": 0,
         "woozers": 0
     },

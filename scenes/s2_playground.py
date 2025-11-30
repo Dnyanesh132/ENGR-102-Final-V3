@@ -19,20 +19,20 @@ class playground(Scene):
         andrew_original = pygame.image.load("assets/andrew.png").convert_alpha()
         andrew_width, andrew_height = andrew_original.get_size()
         andrew_scale = 60 / andrew_height
-        self.andrew_sprite = pygame.transform.scale(andrew_original, (int(andrew_width * andrew_scale), 60))
+        self.andrew_sprite = pygame.transform.scale(andrew_original, (int(andrew_width * andrew_scale)/60 * 110, 110))
         
         # Load big bully sprite
         big_bully_original = pygame.image.load("assets/big_bully.png").convert_alpha()
         bully_width, bully_height = big_bully_original.get_size()
         bully_scale = 50 / bully_height
-        self.big_bully_sprite = pygame.transform.scale(big_bully_original, (int(bully_width * bully_scale), 50))
+        self.big_bully_sprite = pygame.transform.scale(big_bully_original, (int(bully_width * bully_scale)/50 * 130, 130))
         
         # Load small bully sprite
         try:
             small_bully_original = pygame.image.load("assets/snall_bully.png").convert_alpha()
             small_bully_width, small_bully_height = small_bully_original.get_size()
             small_bully_scale = 40 / small_bully_height
-            self.small_bully_sprite = pygame.transform.scale(small_bully_original, (int(small_bully_width * small_bully_scale), 40))
+            self.small_bully_sprite = pygame.transform.scale(small_bully_original, (int(small_bully_width * small_bully_scale)/40 * 85, 85))
         except:
             # Fallback to big bully if small doesn't exist
             self.small_bully_sprite = self.big_bully_sprite
@@ -40,12 +40,12 @@ class playground(Scene):
         guy_npc_original = pygame.image.load("assets/guy_npc.png").convert_alpha()
         guy_width, guy_height = guy_npc_original.get_size()
         guy_scale = 45 / guy_height
-        self.guy_npc_sprite = pygame.transform.scale(guy_npc_original, (int(guy_width * guy_scale), 45))
+        self.guy_npc_sprite = pygame.transform.scale(guy_npc_original, (int(guy_width * guy_scale)/45 * 85, 85))
         
         girl_npc_original = pygame.image.load("assets/girl_npc.png").convert_alpha()
         girl_width, girl_height = girl_npc_original.get_size()
         girl_scale = 45 / girl_height
-        self.girl_npc_sprite = pygame.transform.scale(girl_npc_original, (int(girl_width * girl_scale), 45))
+        self.girl_npc_sprite = pygame.transform.scale(girl_npc_original, (int(girl_width * girl_scale)/45 * 85, 85))
         
         # Get number of buyers from classroom negotiations (ensure it persists)
         self.num_buyers = max(0, self.save.get("buyers", 0))  # Ensure it doesn't go negative
@@ -55,15 +55,15 @@ class playground(Scene):
         self.playground_bounds = {
             "left": 50,
             "right": 1230,
-            "top": 50,  # Below fence
-            "bottom": 650  # Above blue bar (approximately)
+            "top": 300,  # Below fence
+            "bottom": 600  # Above blue bar (approximately)
         }
         
         # Create buyer positions (randomly scattered on playground) with mix of boy/girl
         self.buyers = []
         for i in range(self.num_buyers):
             x = random.randint(self.playground_bounds["left"] + 50, self.playground_bounds["right"] - 50)
-            y = random.randint(self.playground_bounds["top"] + 50, self.playground_bounds["bottom"] - 50)
+            y = random.randint(300 , 620)
             # Mix of boy and girl NPCs
             is_girl = random.choice([True, False])
             self.buyers.append({
@@ -77,8 +77,8 @@ class playground(Scene):
         self.random_npcs = []
         for i in range(num_random_npcs):
             # Spawn within playground bounds (between fence and aqua bar)
-            x = random.randint(self.playground_bounds["left"] + 50, self.playground_bounds["right"] - 50)
-            y = random.randint(self.playground_bounds["top"] + 50, self.playground_bounds["bottom"] - 50)
+            x = random.randint(self.playground_bounds["left"] + 50, self.playground_bounds["right"] - 80)
+            y = random.randint(300, 620)
             is_girl = random.choice([True, False])
             self.random_npcs.append({
                 "pos": pygame.math.Vector2(x, y),
@@ -91,7 +91,7 @@ class playground(Scene):
         for i in range(num_bullies):
             # Spawn within playground bounds (between fence and aqua bar)
             x = random.randint(self.playground_bounds["left"] + 50, self.playground_bounds["right"] - 50)
-            y = random.randint(self.playground_bounds["top"] + 50, self.playground_bounds["bottom"] - 50)
+            y = random.randint(self.playground_bounds["top"] + 200, self.playground_bounds["bottom"] - 50)
             is_big = random.choice([True, False])  # Mix of big and small
             self.bullies.append({
                 "pos": pygame.math.Vector2(x, y),
@@ -109,19 +109,19 @@ class playground(Scene):
         # Collision boxes (playground boundaries - fence at top, blue bar at bottom)
         self.collision_boxes = [
             # Left fence/wall
-            pygame.Rect(-1, 0, 51, 720),
+            pygame.Rect(0, 0, 20, 720),
             # Right fence/wall
             pygame.Rect(1230, 0, 51, 720),
             # Top fence (keep players below fence)
-            pygame.Rect(0, 0, 1280, 50),
+            pygame.Rect(0, 0, 1280, 300),
             # Bottom blue bar (keep players above blue bar)
             pygame.Rect(0, 650, 1280, 70),
             # Playground equipment (approximate positions - adjust based on actual image)
-            pygame.Rect(100, 200, 120, 120),   # Blue dome climber (left)
-            pygame.Rect(250, 250, 100, 150),   # Swing set
-            pygame.Rect(550, 300, 80, 80),     # Tree stump
-            pygame.Rect(900, 200, 200, 200),   # Large play structure (right)
-            pygame.Rect(400, 500, 300, 100),   # Sandbox (foreground)
+            #pygame.Rect(100, 200, 120, 120),   # Blue dome climber (left)
+            #pygame.Rect(250, 250, 100, 150),   # Swing set
+            #pygame.Rect(550, 300, 80, 80),     # Tree stump
+            #pygame.Rect(900, 200, 150, 200),   # Large play structure (right)
+              # Sandbox (foreground)
         ]
         
         # Fonts
@@ -279,7 +279,7 @@ class playground(Scene):
         
         # Draw inventory if toggled
         if self.show_inventory:
-            self._draw_inventory(screen)
+            self.draw_inventory(screen)
         
         # Show nearby buyer hint
         for buyer in self.buyers:
