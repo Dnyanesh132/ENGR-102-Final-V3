@@ -1,6 +1,5 @@
 import pygame
 from .scene_template import Scene
-from save_manager import load_save
 
 class store(Scene):
     def __init__(self):
