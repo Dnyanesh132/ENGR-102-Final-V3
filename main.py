@@ -6,6 +6,7 @@ from scenes.c1_title_screen import title_screen
 from scenes.c2_intro import intro
 from scenes.c3_ending import ending
 from scenes.c4_brother_a_transition import brother_a_transition
+from scenes.c5_brother_b_transition import brother_b_transition
 from scenes.s1_classroom import classroom
 from scenes.s2_playground import playground
 from scenes.s3_hallway import hallway
@@ -22,6 +23,7 @@ SCENES = {
     "classroom":classroom,
     "playground":playground,
     "hallway":hallway,
+    "brother_b_transition":brother_b_transition,
     "street":street,
     "store":store,
     "costco":costco

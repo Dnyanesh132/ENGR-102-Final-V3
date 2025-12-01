@@ -5,30 +5,38 @@ class Scene:
     """This is the parent class for all scenes, it is like a template.
     """
     
-    def __init__(self, duration = None, next_scene_key = None):
+    def __init__(self, duration = None, next_scene_key = None, back_name = None, brother_name = None, initial_pos = None):
         """Default constructor. It sets the initial values for the scene like initial position.
 
         Parameters:
             duration (float): Time the scene should last in seconds (real time). Defaults to None.
             next_scene_key (string): The key for the scene to follow after the current scene. Defaults to None.
+            back_name (string): The name of the file for the background for the current scene. Defaults to None.
+            brother_name (string): The name of the brother for the current scene. Defaults to None.
+            initial_pos (Vector2): The initial position of the player. Defaults to None.
         """
         self.next_scene = self
         self.timer = 0.0
         self.duration = duration
         self.default_next_scene = next_scene_key
+        self.background_name = back_name
         self.font = pygame.font.Font(None, 36)
         self.save = load_save()
-        
-        # Default data to be changed in other files
-        self.player_pos = None
-        self.player_collision_box = None
-        self.player_speed = None
-        self.collision_boxes = None
-        
-        # Persistent inventory system
         self.show_inventory = False
+        
+        
+        self.player_pos = initial_pos
+        # Collision box and speed for respective brother
+        if(brother_name == "Andrew"):
+            self.player_collision_box = pygame.Rect(self.player_pos.x + 7.5, self.player_pos.y + 30, 15, 30)
+            self.player_speed = self.save["bA_speed"]
+        elif(brother_name == "Mark"):
+            self.player_collision_box = None
+            self.player_speed = self.save["bB_speed"]
+        
         self.small_font = pygame.font.Font(None, 28)
         self.tiny_font = pygame.font.Font(None, 24)
+        self.collision_boxes = None
         
     def save_game(self):
         """When called, saves the game data to the file "save.json".
@@ -41,8 +49,42 @@ class Scene:
         Parameters:
             events (List[Event]): A list of events that pygame registers at an instant of time.
         """
+        
+        self.check_movement_keys(events)
+        self.check_open_inventory(events)
+        
+        
+    
+    def update(self, dt):
+        """This function handles the game logic on what should be updated. It should move objects, animate sprites, check for collisions,
+        update timers, update counters, etc.
+
+        Parameters:
+            dt (float): The time step (in seconds) taken before updating data again
+        """
+        
+        self.update_timer(dt)
+            
+    def render(self, screen, name_of_scene = None):
+        """This function is what draws the whole frame to the screen. It does not handle any game logic, it purely draws the pixels to the
+        screen without changing anything, completely visual.
+
+        Parameters:
+            screen (Surface): The window that displays the game.
+        """
+        
+        # Clear the screen
+        screen.fill((0,0,0))
+        
+        # Display main stuff
+        self.display_background(screen)
+        self.display_screen_hints(screen)
+        self.display_counters(screen)
+        self.display_scene_name(screen, name_of_scene)
+        
+    def check_movement_keys(self,events):
         self.movement = pygame.math.Vector2(0, 0)
-        keys = pygame.key.get_pressed()  # continuous input
+        keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
             self.movement.x = -1
         if keys[pygame.K_RIGHT]:
@@ -51,7 +93,8 @@ class Scene:
             self.movement.y = -1
         if keys[pygame.K_DOWN]:
             self.movement.y = 1
-        
+    
+    def check_open_inventory(self, events):
         # Toggle inventory with I key, skip time with period key
         for event in events:
             if event.type == pygame.KEYDOWN:
@@ -61,25 +104,19 @@ class Scene:
                     # Skip 15 seconds (for debugging)
                     if self.duration is not None:
                         self.timer += 15
-    
-    def update(self, dt):
-        """This function handles the game logic on what should be updated. It should move objects, animate sprites, check for collisions,
-        update timers, update counters, etc.
-
-        Parameters:
-            dt (float): The time step (in seconds) taken before updating data again
-        """
-        # Update the timer
+        
+    def update_timer(self, dt):
         if self.duration is not None:
             self.timer += dt
             if self.timer >= self.duration and self.default_next_scene:
                 self.switch_to(self.default_next_scene)
-                
+            
+    def move(self, dt):
         # Normalize movement speed
         if self.movement.length_squared() > 0:
             self.movement = self.movement.normalize()
             
-    def move(self, dt):
+        # Check if a collision occurs in either x or y direction before updating movement
         if self.movement.x != 0:
             new_rect = self.player_collision_box.copy()
             new_rect.x += self.movement.x * self.player_speed * dt
@@ -94,18 +131,17 @@ class Scene:
             if not any(new_rect.colliderect(box) for box in self.collision_boxes):
                 self.player_collision_box.y = new_rect.y
 
+        # Update position
         self.player_pos.update(self.player_collision_box.x, self.player_collision_box.y)
-            
-    def render(self, screen):
-        """This function is what draws the whole frame to the screen. It does not handle any game logic, it purely draws the pixels to the
-        screen without changing anything, completely visual.
-
-        Parameters:
-            screen (Surface): The window that displays the game.
-        """
-        screen.fill((0,0,0))   # Clears the screen
         
-    def screen_hints(self, screen):
+    def display_background(self, screen):
+        # Load background if necessary
+        if(self.background_name != None):
+            background_image = pygame.image.load("assets/backgrounds/" + self.background_name).convert_alpha()
+            background_image = pygame.transform.scale(background_image, screen.get_size())
+            screen.blit(background_image, (0, 0))
+        
+    def display_screen_hints(self, screen):
         # Draw persistent control hints (shown everywhere)
         hints_y = 670
         hint_bg = pygame.Rect(10, hints_y - 5, 350, 40)
@@ -132,6 +168,11 @@ class Scene:
         line2_rect.top += padding
         screen.blit(line2_surface, line2_rect)
     
+    def display_scene_name(self, screen, scene_name):
+        if(scene_name != None):
+            text = self.font.render(scene_name, True, (0,0,0))
+            screen.blit(text, (20, 20))
+        
     def draw_inventory(self, screen):
         """Draw persistent inventory that shows candies and items"""
         if not self.show_inventory:
@@ -207,6 +248,21 @@ class Scene:
             no_items_text = "  No items purchased yet"
             no_items_surface = self.small_font.render(no_items_text, True, (150, 150, 150))
             screen.blit(no_items_surface, (inv_box.x + 50, y_offset))
+    
+    def draw_clock(self, screen):
+        # Draw countdown clock (bottom right)
+        time_remaining = self.duration - self.timer
+        minutes = int(time_remaining // 60)
+        seconds = int(time_remaining % 60)
+        clock_text = f"Time: {minutes:02d}:{seconds:02d}"
+        clock_surface = self.font.render(clock_text, True, (255, 255, 255))
+        clock_rect = clock_surface.get_rect(bottomright=(screen.get_width() - 20, screen.get_height() - 20))
+        
+        # Draw background for clock
+        clock_bg = pygame.Rect(clock_rect.x - 10, clock_rect.y - 5, clock_rect.width + 20, clock_rect.height + 10)
+        pygame.draw.rect(screen, (0, 0, 0, 180), clock_bg)
+        pygame.draw.rect(screen, (255, 255, 255), clock_bg, 2)
+        screen.blit(clock_surface, clock_rect)
     
     def switch_to(self, next_scene_key):
         """This function is used to change what the next scene should be. It is simple enough that it is not overloaded in the individual

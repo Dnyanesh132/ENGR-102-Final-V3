@@ -4,96 +4,12 @@ from .scene_template import Scene
 
 class classroom(Scene):
     def __init__(self):
-        # Initialize the scene to follow and the duration of the current scene 
-        # Changed from 8-11 AM (180s) to 9-11 AM (120s = 2 hours)
-        super().__init__(120, "playground")
-        
-        # Reset buyers at the start of a new day
-        self.save["buyers"] = 0
-        self.save_game()
-        
-        # Initial player position (x, y)
-        self.player_pos = pygame.math.Vector2(600, 400)
-        # Collision box updated to match Andrew's new size (60 pixels tall)
-        # Changed Andrew's hitbox to be around his feet and centered his hitbox better around the sprite
-        self.player_collision_box = pygame.Rect(self.player_pos.x + 7.5, self.player_pos.y + 30, 15, 30)
-        self.player_speed = self.save["bA_speed"]
-        
-        # Load sprites with proper aspect ratio scaling
-        # Get original sprite dimensions to maintain aspect ratio
-        andrew_original = pygame.image.load("assets/andrew.png").convert_alpha()
-        andrew_width, andrew_height = andrew_original.get_size()
-        # Scale to 60 pixels tall, maintain aspect ratio
-        andrew_scale = 60 / andrew_height
-        self.andrew_sprite = pygame.transform.scale(andrew_original, (int(andrew_width * andrew_scale) / 60 * 110 , 110))
-        
-        teacher_original = pygame.image.load("assets/teacher.png").convert_alpha()
-        teacher_width, teacher_height = teacher_original.get_size()
-        # Scale to 70 pixels tall, maintain aspect ratio
-        teacher_scale = 70 / teacher_height
-        self.teacher_sprite = pygame.transform.scale(teacher_original, (int(teacher_width * teacher_scale) / 70 * 120, 120))
-        
-        guy_npc_original = pygame.image.load("assets/guy_npc.png").convert_alpha()
-        guy_width, guy_height = guy_npc_original.get_size()
-        # Scale to 45 pixels tall, maintain aspect ratio
-        guy_scale = 45 / guy_height
-        self.guy_npc_sprite = pygame.transform.scale(guy_npc_original, (int(guy_width * guy_scale) / 45 * 80, 80))
-        
-        girl_npc_original = pygame.image.load("assets/girl_npc.png").convert_alpha()
-        girl_width, girl_height = girl_npc_original.get_size()
-        # Scale to 45 pixels tall, maintain aspect ratio
-        girl_scale = 45 / girl_height
-        self.girl_npc_sprite = pygame.transform.scale(girl_npc_original, (int(girl_width * girl_scale)/45 * 80, 80))
-        
-        # NPC positions next to desks (not on them) and interaction radius
-        self.npcs = [
-            {"sprite": self.guy_npc_sprite, "pos": pygame.math.Vector2(280, 220), "talked": False},  # Next to desk at 210, 160
-            {"sprite": self.girl_npc_sprite, "pos": pygame.math.Vector2(680, 290), "talked": False},  # Next to desk at 712, 263
-            {"sprite": self.guy_npc_sprite, "pos": pygame.math.Vector2(840, 290), "talked": False},  # Next to desk at 873, 263
-            {"sprite": self.girl_npc_sprite, "pos": pygame.math.Vector2(680, 440), "talked": False},  # Next to desk at 712, 406
-            {"sprite": self.guy_npc_sprite, "pos": pygame.math.Vector2(840, 440), "talked": False},  # Next to desk at 873, 406
-            {"sprite": self.girl_npc_sprite, "pos": pygame.math.Vector2(70, 373), "talked": False},  # Kid in corner on carpet (around 13, 338)
-        ]
-        self.interaction_radius = 50  # Distance to interact with NPCs
-        
-        # Teacher position (at main desk, next to it - further from desk)
-        # Large desk is at 1033, 275 with size 87x217
-        # Position teacher to the right side, not on the desk
-        self.teacher_pos = pygame.math.Vector2(1150, 380)  # Further right, next to large desk
-        
-        # Teacher's vision circle - smaller and zig-zag pattern
-        self.vision_radius = 100  # Smaller radius
-        self.vision_x = 300  # Starting position
-        self.vision_y = 300  # Starting Y position
-        self.vision_speed_x = 70  # Pixels per second (faster)
-        self.vision_speed_y = 45  # Pixels per second (faster)
-        self.vision_direction_x = 1  # 1 for right, -1 for left
-        self.vision_direction_y = 1  # 1 for down, -1 for up
-        self.vision_min_x = 250
-        self.vision_max_x = 950
-        self.vision_min_y = 250
-        self.vision_max_y = 450
-        
-        # Negotiation mini-game state
-        self.in_negotiation = False
-        self.negotiation_timer = 0.0
-        self.negotiation_duration = 3.0  # 3 seconds to complete
-        self.negotiation_target_npc = None
-        self.negotiation_keys_pressed = []
-        self.negotiation_sequence = []  # Random sequence of keys to press
-        self.negotiation_current_index = 0
+        # Initial position
+        initial_pos = pygame.math.Vector2(600, 400)
+        super().__init__(120, "playground", "classroom.png", "Andrew", initial_pos)
         
         # Font for help text
         self.small_font = pygame.font.Font(None, 28)
-        
-        # Naughty corner state
-        self.in_naughty_corner = False
-        self.naughty_corner_timer = 0.0
-        self.naughty_corner_duration = 5.0  # 5 seconds penalty
-        self.naughty_corner_pos = pygame.math.Vector2(50, 500)
-        self.just_caught = False  # Cooldown to prevent immediate re-catching
-        self.catch_cooldown = 1.0  # 1 second cooldown after being caught
-        self.catch_cooldown_timer = 0.0
         
         # Initialize collision boxes
         self.collision_boxes = [
@@ -122,8 +38,88 @@ class classroom(Scene):
             pygame.Rect(1280, 0, 1, 720),
             pygame.Rect(0, 720, 1280, 1),
         ]
+        
+        # Reset buyers at the start of a new day
+        self.save["buyers"] = 0
+        self.save_game()
+        
+        
+        # Load sprites with proper aspect ratio scaling
+        # Get original sprite dimensions to maintain aspect ratio
+        
+        andrew_original = pygame.image.load("assets/andrew.png").convert_alpha()
+        andrew_width, andrew_height = andrew_original.get_size()
+        # Scale to 60 pixels tall, maintain aspect ratio
+        andrew_scale = 60 / andrew_height
+        self.andrew_sprite = pygame.transform.scale(andrew_original, (int(andrew_width * andrew_scale) / 60 * 110 , 110))
+        
+        teacher_original = pygame.image.load("assets/teacher.png").convert_alpha()
+        teacher_width, teacher_height = teacher_original.get_size()
+        # Scale to 70 pixels tall, maintain aspect ratio
+        teacher_scale = 70 / teacher_height
+        self.teacher_sprite = pygame.transform.scale(teacher_original, (int(teacher_width * teacher_scale) / 70 * 120, 120))
+        
+        guy_npc_original = pygame.image.load("assets/guy_npc.png").convert_alpha()
+        guy_width, guy_height = guy_npc_original.get_size()
+        # Scale to 45 pixels tall, maintain aspect ratio
+        guy_scale = 45 / guy_height
+        self.guy_npc_sprite = pygame.transform.scale(guy_npc_original, (int(guy_width * guy_scale) / 45 * 80, 80))
+        
+        girl_npc_original = pygame.image.load("assets/girl_npc.png").convert_alpha()
+        girl_width, girl_height = girl_npc_original.get_size()
+        # Scale to 45 pixels tall, maintain aspect ratio
+        girl_scale = 45 / girl_height
+        self.girl_npc_sprite = pygame.transform.scale(girl_npc_original, (int(girl_width * girl_scale)/45 * 80, 80))
+        
+        
+        # NPC positions next to desks (not on them) and interaction radius
+        self.npcs = [
+            {"sprite": self.guy_npc_sprite, "pos": pygame.math.Vector2(280, 220), "talked": False},  # Next to desk at 210, 160
+            {"sprite": self.girl_npc_sprite, "pos": pygame.math.Vector2(680, 290), "talked": False},  # Next to desk at 712, 263
+            {"sprite": self.guy_npc_sprite, "pos": pygame.math.Vector2(840, 290), "talked": False},  # Next to desk at 873, 263
+            {"sprite": self.girl_npc_sprite, "pos": pygame.math.Vector2(680, 440), "talked": False},  # Next to desk at 712, 406
+            {"sprite": self.guy_npc_sprite, "pos": pygame.math.Vector2(840, 440), "talked": False},  # Next to desk at 873, 406
+            {"sprite": self.girl_npc_sprite, "pos": pygame.math.Vector2(70, 373), "talked": False},  # Kid in corner on carpet (around 13, 338)
+        ]
+        self.interaction_radius = 50  # Distance to interact with NPCs
+        
+        
+        # Teacher position (at main desk, next to it - further from desk)
+        # Large desk is at 1033, 275 with size 87x217
+        # Position teacher to the right side, not on the desk
+        self.teacher_pos = pygame.math.Vector2(1150, 380)  # Further right, next to large desk
+        
+        # Teacher's vision circle - smaller and zig-zag pattern
+        self.vision_radius = 100  # Smaller radius
+        self.vision_x = 300  # Starting position
+        self.vision_y = 300  # Starting Y position
+        self.vision_speed_x = 70  # Pixels per second (faster)
+        self.vision_speed_y = 45  # Pixels per second (faster)
+        self.vision_direction_x = 1  # 1 for right, -1 for left
+        self.vision_direction_y = 1  # 1 for down, -1 for up
+        self.vision_min_x = 250
+        self.vision_max_x = 950
+        self.vision_min_y = 250
+        self.vision_max_y = 450
+        
+        # Negotiation mini-game state
+        self.in_negotiation = False
+        self.negotiation_timer = 0.0
+        self.negotiation_duration = 3.0  # 3 seconds to complete
+        self.negotiation_target_npc = None
+        self.negotiation_keys_pressed = []
+        self.negotiation_sequence = []  # Random sequence of keys to press
+        self.negotiation_current_index = 0
+        
+        # Naughty corner state
+        self.in_naughty_corner = False
+        self.naughty_corner_timer = 0.0
+        self.naughty_corner_duration = 5.0  # 5 seconds penalty
+        self.naughty_corner_pos = pygame.math.Vector2(50, 500)
+        self.just_caught = False  # Cooldown to prevent immediate re-catching
+        self.catch_cooldown = 1.0  # 1 second cooldown after being caught
+        self.catch_cooldown_timer = 0.0
 
-    
     def process_input(self, events):
         super().process_input(events)
         
@@ -174,6 +170,26 @@ class classroom(Scene):
     def update(self, dt):
         super().update(dt)
         
+        self.update_negotiation_timer(dt)
+        self.update_catch_timer(dt)
+        self.update_naughty_corner_timer(dt)
+        self.update_vision_circle_status(dt)
+        
+        # Only allow movement if not in naughty corner and not negotiating
+        if not self.in_naughty_corner and not self.in_negotiation:
+            super().move(dt)
+
+    def render(self, screen):
+        super().render(screen, "Classroom")
+        
+        self.draw_characters(screen)
+        self.draw_teacher_vision(screen)
+        self.draw_negotiation(screen)
+        self.draw_naughty_corner(screen)
+        self.draw_inventory(screen)
+        self.draw_clock(screen)
+    
+    def update_negotiation_timer(self, dt):
         # Update negotiation timer
         if self.in_negotiation:
             self.negotiation_timer += dt
@@ -182,14 +198,16 @@ class classroom(Scene):
                 self.in_negotiation = False
                 self.negotiation_target_npc = None
                 self.negotiation_current_index = 0
-        
+    
+    def update_catch_timer(self, dt):
         # Update catch cooldown
         if self.just_caught:
             self.catch_cooldown_timer += dt
             if self.catch_cooldown_timer >= self.catch_cooldown:
                 self.just_caught = False
                 self.catch_cooldown_timer = 0.0
-        
+                
+    def update_naughty_corner_timer(self, dt):
         # Update naughty corner timer
         if self.in_naughty_corner:
             self.naughty_corner_timer += dt
@@ -224,6 +242,7 @@ class classroom(Scene):
                 self.vision_y = self.vision_min_y
                 self.vision_direction_y = 1
         
+    def update_vision_circle_status(self, dt):
         # Check if player is caught in vision circle (can be caught even during negotiation)
         if not self.in_naughty_corner and not self.just_caught:
             vision_center = pygame.math.Vector2(self.vision_x, self.vision_y)
@@ -238,31 +257,11 @@ class classroom(Scene):
                 self.player_collision_box.y = self.player_pos.y
                 # Lose time (add 30 seconds to timer, making less time remaining)
                 self.timer += 30
-        
-        # Only allow movement if not in naughty corner and not negotiating
-        if not self.in_naughty_corner and not self.in_negotiation:
-            super().move(dt)
 
-
-    def render(self, screen):
-        super().render(screen)
-        
-        # Load background for classroom
-        background_image = pygame.image.load("assets/classroom.png").convert_alpha()
-        background_image = pygame.transform.scale(background_image, screen.get_size())
-        screen.blit(background_image, (0, 0))
-        
-        # Draw screen control hints
-        super().screen_hints(screen)
-        
-        # Draw teacher's vision circle (semi-transparent red) in a zig-zag pattern
-        vision_surface = pygame.Surface((self.vision_radius * 2, self.vision_radius * 2), pygame.SRCALPHA)
-        pygame.draw.circle(vision_surface, (255, 0, 0, 100), (self.vision_radius, self.vision_radius), self.vision_radius)
-        vision_rect = vision_surface.get_rect(center=(self.vision_x, self.vision_y))
-        screen.blit(vision_surface, vision_rect)
-        
-        # Draw vision circle outline
-        pygame.draw.circle(screen, (255, 0, 0), (int(self.vision_x), int(self.vision_y)), self.vision_radius, 3)
+    def draw_characters(self, screen):
+        # Draw player (Andrew)
+        andrew_rect = self.andrew_sprite.get_rect(center=self.player_pos)
+        screen.blit(self.andrew_sprite, andrew_rect)
         
         # Draw NPCs next to desks
         for npc in self.npcs:
@@ -282,23 +281,17 @@ class classroom(Scene):
         teacher_rect = self.teacher_sprite.get_rect(center=self.teacher_pos)
         screen.blit(self.teacher_sprite, teacher_rect)
         
-        # Draw player (Andrew)
-        andrew_rect = self.andrew_sprite.get_rect(center=self.player_pos)
-        screen.blit(self.andrew_sprite, andrew_rect)
+    def draw_teacher_vision(self, screen):
+        # Draw teacher's vision circle (semi-transparent red) in a zig-zag pattern
+        vision_surface = pygame.Surface((self.vision_radius * 2, self.vision_radius * 2), pygame.SRCALPHA)
+        pygame.draw.circle(vision_surface, (255, 0, 0, 100), (self.vision_radius, self.vision_radius), self.vision_radius)
+        vision_rect = vision_surface.get_rect(center=(self.vision_x, self.vision_y))
+        screen.blit(vision_surface, vision_rect)
         
-        # Draw countdown clock (bottom right)
-        time_remaining = self.duration - self.timer
-        minutes = int(time_remaining // 60)
-        seconds = int(time_remaining % 60)
-        clock_text = f"Time: {minutes:02d}:{seconds:02d}"
-        clock_surface = self.font.render(clock_text, True, (255, 255, 255))
-        clock_rect = clock_surface.get_rect(bottomright=(screen.get_width() - 20, screen.get_height() - 20))
-        # Draw background for clock
-        clock_bg = pygame.Rect(clock_rect.x - 10, clock_rect.y - 5, clock_rect.width + 20, clock_rect.height + 10)
-        pygame.draw.rect(screen, (0, 0, 0, 180), clock_bg)
-        pygame.draw.rect(screen, (255, 255, 255), clock_bg, 2)
-        screen.blit(clock_surface, clock_rect)
-        
+        # Draw vision circle outline
+        pygame.draw.circle(screen, (255, 0, 0), (int(self.vision_x), int(self.vision_y)), self.vision_radius, 3)
+
+    def draw_negotiation(self, screen):
         # Draw negotiation mini-game UI
         if self.in_negotiation:
             # Dim background
@@ -349,8 +342,8 @@ class classroom(Scene):
             timer_text = self.font.render(f"Time: {time_left:.1f}s", True, (255, 255, 255))
             timer_rect = timer_text.get_rect(center=(box_x + box_w // 2, box_y + 180))
             screen.blit(timer_text, timer_rect)
-        
-        # Draw naughty corner indicator if caught
+            
+    def draw_naughty_corner(self, screen):
         if self.in_naughty_corner:
             warning_text = self.font.render("NAUGHTY CORNER! Wait...", True, (255, 0, 0))
             warning_rect = warning_text.get_rect(center=(screen.get_width() // 2, 100))
@@ -360,12 +353,3 @@ class classroom(Scene):
             timer_text = self.font.render(f"Time remaining: {time_left:.1f}s", True, (255, 255, 0))
             timer_rect = timer_text.get_rect(center=(screen.get_width() // 2, 140))
             screen.blit(timer_text, timer_rect)
-
-        # Draw UI text
-        text = self.font.render("Classroom", True, (0,0,0))
-        screen.blit(text, (20, 20))
-        
-        self.display_counters(screen)
-        
-        # Draw persistent inventory if toggled
-        self.draw_inventory(screen)

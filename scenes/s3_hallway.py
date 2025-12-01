@@ -4,7 +4,7 @@ from .scene_template import Scene
 class hallway(Scene):
     def __init__(self):
         # Initialize the scene to follow and the duration of the current scene 
-        super().__init__(120, "street")  # 1pm-3pm = 120 seconds
+        super().__init__(120, "brother_b_transition")  # 1pm-3pm = 120 seconds
         
         # Initial player position
         self.player_pos = pygame.math.Vector2(200, 360)

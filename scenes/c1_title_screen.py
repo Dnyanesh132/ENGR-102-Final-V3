@@ -27,7 +27,7 @@ class title_screen(Scene):
 
 class title_screen(Scene):
     def __init__(self):
-        super().__init__(None, "intro")
+        super().__init__(None, "brother_a_transition")
 
         # Background image (replace file path with your own)
         self.background = pygame.image.load("assets/backgrounds/title_bg.png").convert()

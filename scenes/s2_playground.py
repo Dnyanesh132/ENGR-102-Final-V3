@@ -4,18 +4,35 @@ from .scene_template import Scene
 
 class playground(Scene):
     def __init__(self):
-        # Initialize the scene to follow and the duration of the current scene 
-        super().__init__(120, "hallway")  # 11am-1pm = 120 seconds
+        # Initial player position 
+        initial_pos = pygame.math.Vector2(640, 360)
+        super().__init__(120, "hallway", "playground.png", "Andrew", initial_pos)  # 11am-1pm = 120 seconds
         
-        # Initial player position (within playground bounds)
-        self.player_pos = pygame.math.Vector2(640, 360)
-        # Ensure position is within playground bounds
-        self.player_pos.x = max(100, min(1180, self.player_pos.x))
-        self.player_pos.y = max(100, min(600, self.player_pos.y))
-        self.player_collision_box = pygame.Rect(self.player_pos.x, self.player_pos.y, 50, 60)
-        self.player_speed = self.save["bA_speed"]
+        # Fonts
+        self.small_font = pygame.font.Font(None, 28)
+        self.tiny_font = pygame.font.Font(None, 24)
+        
+        # Collision boxes (playground boundaries - fence at top, blue bar at bottom)
+        self.collision_boxes = [
+            # Left fence/wall
+            pygame.Rect(0, 0, 20, 720),
+            # Right fence/wall
+            pygame.Rect(1230, 0, 51, 720),
+            # Top fence (keep players below fence)
+            pygame.Rect(0, 0, 1280, 300),
+            # Bottom blue bar (keep players above blue bar)
+            pygame.Rect(0, 650, 1280, 70),
+            # Playground equipment (approximate positions - adjust based on actual image)
+            #pygame.Rect(100, 200, 120, 120),   # Blue dome climber (left)
+            #pygame.Rect(250, 250, 100, 150),   # Swing set
+            #pygame.Rect(550, 300, 80, 80),     # Tree stump
+            #pygame.Rect(900, 200, 150, 200),   # Large play structure (right)
+            # Sandbox (foreground)
+        ]
         
         # Load sprites
+        
+        # Load Brother A
         andrew_original = pygame.image.load("assets/andrew.png").convert_alpha()
         andrew_width, andrew_height = andrew_original.get_size()
         andrew_scale = 60 / andrew_height
@@ -28,14 +45,12 @@ class playground(Scene):
         self.big_bully_sprite = pygame.transform.scale(big_bully_original, (int(bully_width * bully_scale)/50 * 130, 130))
         
         # Load small bully sprite
-        try:
-            small_bully_original = pygame.image.load("assets/snall_bully.png").convert_alpha()
-            small_bully_width, small_bully_height = small_bully_original.get_size()
-            small_bully_scale = 40 / small_bully_height
-            self.small_bully_sprite = pygame.transform.scale(small_bully_original, (int(small_bully_width * small_bully_scale)/40 * 85, 85))
-        except:
-            # Fallback to big bully if small doesn't exist
-            self.small_bully_sprite = self.big_bully_sprite
+        small_bully_original = pygame.image.load("assets/snall_bully.png").convert_alpha()
+        small_bully_width, small_bully_height = small_bully_original.get_size()
+        small_bully_scale = 40 / small_bully_height
+        self.small_bully_sprite = pygame.transform.scale(small_bully_original, (int(small_bully_width * small_bully_scale)/40 * 85, 85))
+        
+        # Load other student npcs
         
         guy_npc_original = pygame.image.load("assets/guy_npc.png").convert_alpha()
         guy_width, guy_height = guy_npc_original.get_size()
@@ -105,28 +120,6 @@ class playground(Scene):
         # Selling mechanics
         self.sell_quantity = 1  # Amount to sell per transaction
         self.interaction_radius = 60
-        
-        # Collision boxes (playground boundaries - fence at top, blue bar at bottom)
-        self.collision_boxes = [
-            # Left fence/wall
-            pygame.Rect(0, 0, 20, 720),
-            # Right fence/wall
-            pygame.Rect(1230, 0, 51, 720),
-            # Top fence (keep players below fence)
-            pygame.Rect(0, 0, 1280, 300),
-            # Bottom blue bar (keep players above blue bar)
-            pygame.Rect(0, 650, 1280, 70),
-            # Playground equipment (approximate positions - adjust based on actual image)
-            #pygame.Rect(100, 200, 120, 120),   # Blue dome climber (left)
-            #pygame.Rect(250, 250, 100, 150),   # Swing set
-            #pygame.Rect(550, 300, 80, 80),     # Tree stump
-            #pygame.Rect(900, 200, 150, 200),   # Large play structure (right)
-            # Sandbox (foreground)
-        ]
-        
-        # Fonts
-        self.small_font = pygame.font.Font(None, 28)
-        self.tiny_font = pygame.font.Font(None, 24)
         
     def process_input(self, events):
         super().process_input(events)
@@ -225,21 +218,12 @@ class playground(Scene):
         super().move(dt)
         
     def render(self, screen):
-        super().render(screen)
+        super().render(screen, "Lunch Break - Playground")
         
-        # Load background
-        background_image = pygame.image.load("assets/playground.png").convert_alpha()
-        
-        if background_image:
-            background_image = pygame.transform.scale(background_image, screen.get_size())
-            screen.blit(background_image, (0, 0))
-        else:
-            # Fallback green background
-            screen.fill((100, 200, 100))
-            
-        # Draw screen control hints
-        super().screen_hints(screen)
-        
+        # Draw player (Andrew)
+        andrew_rect = self.andrew_sprite.get_rect(center=self.player_pos)
+        screen.blit(self.andrew_sprite, andrew_rect)
+
         # Draw random NPCs (non-buyers, just atmosphere)
         for npc in self.random_npcs:
             npc_sprite = self.girl_npc_sprite if npc["is_girl"] else self.guy_npc_sprite
@@ -267,16 +251,8 @@ class playground(Scene):
                 frozen_rect = frozen_text.get_rect(center=(bully["pos"].x, bully["pos"].y - 30))
                 screen.blit(frozen_text, frozen_rect)
         
-        # Draw player (Andrew)
-        andrew_rect = self.andrew_sprite.get_rect(center=self.player_pos)
-        screen.blit(self.andrew_sprite, andrew_rect)
-        
         # Draw improved UI (less cluttered, better formatted)
         self._draw_ui(screen)
-        
-        # Draw inventory if toggled
-        if self.show_inventory:
-            self.draw_inventory(screen)
         
         # Show nearby buyer hint
         for buyer in self.buyers:
@@ -289,25 +265,8 @@ class playground(Scene):
                     screen.blit(hint_surface, hint_rect)
                     break
         
-        # Draw countdown clock
-        time_remaining = self.duration - self.timer
-        minutes = int(time_remaining // 60)
-        seconds = int(time_remaining % 60)
-        clock_text = f"Time: {minutes:02d}:{seconds:02d}"
-        clock_surface = self.font.render(clock_text, True, (255, 255, 255))
-        clock_rect = clock_surface.get_rect(bottomright=(screen.get_width() - 20, screen.get_height() - 20))
-        clock_bg = pygame.Rect(clock_rect.x - 10, clock_rect.y - 5, clock_rect.width + 20, clock_rect.height + 10)
-        pygame.draw.rect(screen, (0, 0, 0, 180), clock_bg)
-        pygame.draw.rect(screen, (255, 255, 255), clock_bg, 2)
-        screen.blit(clock_surface, clock_rect)
-        
-        # Draw UI text
-        text = self.font.render("Lunch Break - Playground", True, (0, 0, 0))
-        screen.blit(text, (20, 20))
-        
-        self.display_counters(screen)
-        
-        # Draw persistent inventory if toggled
+        # Draw clock and inventory if needed
+        self.draw_clock(screen)
         self.draw_inventory(screen)
     
     def _draw_ui(self, screen):
