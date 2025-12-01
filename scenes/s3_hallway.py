@@ -184,13 +184,7 @@ class hallway(Scene):
         super().render(screen)
         
         # Load background
-        try:
-            background_image = pygame.image.load("assets/backgrounds/hallway.png").convert_alpha()
-        except:
-            try:
-                background_image = pygame.image.load("assets/hallway.png").convert_alpha()
-            except:
-                background_image = None
+        background_image = pygame.image.load("assets/hallway.png").convert_alpha()    
         
         if background_image:
             background_image = pygame.transform.scale(background_image, screen.get_size())
@@ -198,6 +192,9 @@ class hallway(Scene):
         else:
             # Fallback beige background
             screen.fill((200, 180, 150))
+            
+        # Draw screen control hints
+        super().screen_hints(screen)
         
         # Draw physical barrier if not paid (full width)
         if not self.hall_monitor_paid:
@@ -327,7 +324,7 @@ class hallway(Scene):
         screen.blit(clock_surface, clock_rect)
         
         # Draw UI text
-        text = self.font.render("Hallway", True, (255, 255, 255))
+        text = self.font.render("Hallway", True, (0, 0, 0))
         screen.blit(text, (20, 20))
         
         self.display_counters(screen)

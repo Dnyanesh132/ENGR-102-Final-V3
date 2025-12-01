@@ -204,6 +204,9 @@ class store(Scene):
             # Draw store shelves
             for x in range(100, 1000, 300):
                 pygame.draw.rect(screen, (139, 69, 19), (x, 200, 200, 100))
+                
+        # Draw screen control hints
+        super().screen_hints(screen)
         
         # Draw checkout area (register)
         checkout_rect = pygame.Rect(850, 350, 300, 100)
@@ -335,7 +338,7 @@ class store(Scene):
         screen.blit(clock_surface, clock_rect)
         
         # Draw UI text
-        text = self.font.render("Candy Store", True, (255, 255, 255))
+        text = self.font.render("Candy Store", True, (0, 0, 0))
         screen.blit(text, (20, 20))
         
         # Control hints are now drawn in base Scene class

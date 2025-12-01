@@ -11,5 +11,5 @@ class intro(Scene):
     def render(self, screen):
         super().render(screen)
         
-        text = self.font.render("You are now playing as Brother A", True, (255,255,255))
+        text = self.font.render("You are now playing as Brother Andrew", True, (255,255,255))
         screen.blit(text, (100,100))

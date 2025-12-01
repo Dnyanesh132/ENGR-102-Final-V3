@@ -252,6 +252,9 @@ class classroom(Scene):
         background_image = pygame.transform.scale(background_image, screen.get_size())
         screen.blit(background_image, (0, 0))
         
+        # Draw screen control hints
+        super().screen_hints(screen)
+        
         # Draw teacher's vision circle (semi-transparent red) in a zig-zag pattern
         vision_surface = pygame.Surface((self.vision_radius * 2, self.vision_radius * 2), pygame.SRCALPHA)
         pygame.draw.circle(vision_surface, (255, 0, 0, 100), (self.vision_radius, self.vision_radius), self.vision_radius)
@@ -359,7 +362,7 @@ class classroom(Scene):
             screen.blit(timer_text, timer_rect)
 
         # Draw UI text
-        text = self.font.render("Classroom", True, (255,255,255))
+        text = self.font.render("Classroom", True, (0,0,0))
         screen.blit(text, (20, 20))
         
         self.display_counters(screen)

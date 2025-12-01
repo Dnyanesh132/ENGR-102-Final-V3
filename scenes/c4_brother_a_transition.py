@@ -23,7 +23,7 @@ class brother_a_transition(Scene):
         screen.fill((0, 0, 0))
         
         # Transition message
-        message_text = "You are now playing as Brother A"
+        message_text = "You are now playing as Brother Andrew"
         message_surface = self.large_font.render(message_text, True, (255, 255, 255))
         message_rect = message_surface.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
         screen.blit(message_surface, message_rect)

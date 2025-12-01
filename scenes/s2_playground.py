@@ -121,7 +121,7 @@ class playground(Scene):
             #pygame.Rect(250, 250, 100, 150),   # Swing set
             #pygame.Rect(550, 300, 80, 80),     # Tree stump
             #pygame.Rect(900, 200, 150, 200),   # Large play structure (right)
-              # Sandbox (foreground)
+            # Sandbox (foreground)
         ]
         
         # Fonts
@@ -228,13 +228,7 @@ class playground(Scene):
         super().render(screen)
         
         # Load background
-        try:
-            background_image = pygame.image.load("assets/backgrounds/playground.png").convert_alpha()
-        except:
-            try:
-                background_image = pygame.image.load("assets/playground.png").convert_alpha()
-            except:
-                background_image = None
+        background_image = pygame.image.load("assets/playground.png").convert_alpha()
         
         if background_image:
             background_image = pygame.transform.scale(background_image, screen.get_size())
@@ -242,6 +236,9 @@ class playground(Scene):
         else:
             # Fallback green background
             screen.fill((100, 200, 100))
+            
+        # Draw screen control hints
+        super().screen_hints(screen)
         
         # Draw random NPCs (non-buyers, just atmosphere)
         for npc in self.random_npcs:
@@ -305,7 +302,7 @@ class playground(Scene):
         screen.blit(clock_surface, clock_rect)
         
         # Draw UI text
-        text = self.font.render("Lunch Break - Playground", True, (255, 255, 255))
+        text = self.font.render("Lunch Break - Playground", True, (0, 0, 0))
         screen.blit(text, (20, 20))
         
         self.display_counters(screen)

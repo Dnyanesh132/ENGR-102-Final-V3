@@ -211,6 +211,9 @@ class street(Scene):
             for y in range(0, 720, 40):
                 pygame.draw.line(screen, (255, 255, 255), (0, y), (1280, y), 2)
         
+        # Draw screen control hints
+        super().screen_hints(screen)
+        
         # Draw rhythm game UI
         if self.in_rhythm_game:
             # Dim background
@@ -315,7 +318,7 @@ class street(Scene):
         screen.blit(clock_surface, clock_rect)
         
         # Draw UI text
-        text = self.font.render("Brother Mark's Turn - Road", True, (255, 255, 255))
+        text = self.font.render("Brother Mark's Turn - Road", True, (0, 0, 0))
         screen.blit(text, (20, 20))
         
         self.display_counters(screen)

@@ -105,9 +105,10 @@ class Scene:
         """
         screen.fill((0,0,0))   # Clears the screen
         
+    def screen_hints(self, screen):
         # Draw persistent control hints (shown everywhere)
-        hints_y = 60
-        hint_bg = pygame.Rect(10, hints_y - 5, 300, 50)
+        hints_y = 670
+        hint_bg = pygame.Rect(10, hints_y - 5, 350, 40)
         hint_surface = pygame.Surface((hint_bg.width, hint_bg.height), pygame.SRCALPHA)
         hint_surface.fill((0, 0, 0, 150))
         screen.blit(hint_surface, hint_bg)
@@ -117,25 +118,19 @@ class Scene:
         screen.blit(controls_surface, (20, hints_y))
 
     def display_counters(self, screen):
-        WHITE = (255, 255, 255)
+        COLOR = (0, 0, 0)
         SCREEN_WIDTH, SCREEN_HEIGHT = screen.get_size()
         padding = 10
-        line1_surface = self.font.render(f"Buyers: {self.save["buyers"]}", True, WHITE)
+        line1_surface = self.font.render(f"Buyers: {self.save["buyers"]}", True, COLOR)
         line1_rect = line1_surface.get_rect()
         line1_rect.topright = (SCREEN_WIDTH - padding, padding)
         screen.blit(line1_surface, line1_rect)
 
-        line2_surface = self.font.render(f"Cash: {self.save["money"]}", True, WHITE)
+        line2_surface = self.font.render(f"Cash: {self.save["money"]}", True, COLOR)
         line2_rect = line2_surface.get_rect()
         line2_rect.topright = line1_rect.bottomright
         line2_rect.top += padding
         screen.blit(line2_surface, line2_rect)
-
-        line3_surface = self.font.render(f"Candy: {self.save["candy"]}", True, WHITE)
-        line3_rect = line3_surface.get_rect()
-        line3_rect.topright = line2_rect.bottomright
-        line3_rect.top += padding
-        screen.blit(line3_surface, line3_rect)
     
     def draw_inventory(self, screen):
         """Draw persistent inventory that shows candies and items"""
