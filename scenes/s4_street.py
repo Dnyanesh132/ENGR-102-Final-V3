@@ -5,7 +5,7 @@ class street(Scene):
     def __init__(self):
         # Initial player position (x, y)
         initial_pos = pygame.math.Vector2(100, 360)
-        super().__init__(180, "store", "street.png", "Andrew", initial_pos)
+        super().__init__(180, "store", "street.png", "Mark", initial_pos)
 
         # Check if has costco membership to determine next scene
         if self.save["has_costco_membership"]:
@@ -23,11 +23,11 @@ class street(Scene):
             pygame.Rect(0, 720, 1280, 1),  # Bottom wall
         ]
         
-        # Load Andrew's sprite
-        andrew_original = pygame.image.load("assets/andrew.png").convert_alpha()
-        andrew_width, andrew_height = andrew_original.get_size()
-        andrew_scale = 60 / andrew_height
-        self.andrew_sprite = pygame.transform.scale(andrew_original, (int(andrew_width * andrew_scale), 60))
+        # Load Mark's sprite
+        mark_original = pygame.image.load("assets/mark.png").convert_alpha()
+        mark_width, mark_height = mark_original.get_size()
+        mark_scale = 60 / mark_height
+        self.mark_sprite = pygame.transform.scale(mark_original, (int(mark_width * mark_scale), 60))
         
         # Rhythm walking mini-game state
         self.in_rhythm_game = True  # Start in rhythm game
@@ -206,7 +206,7 @@ class street(Scene):
             self.draw_game_fail(screen, boxx, boxy, boxw, boxh)
         else:
             # Rhythm game completed
-            self.draw_andrew_moving(screen)            
+            self.draw_mark_moving(screen)            
             self.draw_completion_message(screen)
         
     def dim_background(self, screen):
@@ -289,10 +289,10 @@ class street(Scene):
                 penalty_rect = penalty_surface.get_rect(center=(box_x + box_w // 2, box_y + 360))
                 screen.blit(penalty_surface, penalty_rect)
 
-    def draw_andrew_moving(self, screen):
-         # Draw Andrew moving across screen
-            andrew_rect = self.andrew_sprite.get_rect(center=self.player_pos)
-            screen.blit(self.andrew_sprite, andrew_rect)
+    def draw_mark_moving(self, screen):
+         # Draw mark moving across screen
+            mark_rect = self.mark_sprite.get_rect(center=self.player_pos)
+            screen.blit(self.mark_sprite, mark_rect)
 
     def draw_completion_message(self, screen):
          # Show completion message briefly

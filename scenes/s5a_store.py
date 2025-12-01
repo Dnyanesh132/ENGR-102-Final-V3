@@ -5,7 +5,7 @@ class store(Scene):
     def __init__(self):
         # Initial player position
         initial_pos = pygame.math.Vector2(200, 500)
-        super().__init__(None, "brother_a_transition", "store.jpg", "Andrew", initial_pos)  # After store, show transition then go to classroom
+        super().__init__(180, "brother_a_transition", "store.jpg", "mark", initial_pos)  # After store, show transition then go to classroom
         
         # Get remaining time
         self.timer = self.save["brother_b_remaining_time"]
@@ -37,10 +37,10 @@ class store(Scene):
         ]
         
         # Load Mark's sprite
-        andrew_original = pygame.image.load("assets/andrew.png").convert_alpha()
-        andrew_width, andrew_height = andrew_original.get_size()
-        andrew_scale = 60 / andrew_height
-        self.andrew_sprite = pygame.transform.scale(andrew_original, (int(andrew_width * andrew_scale), 60))
+        mark_original = pygame.image.load("assets/mark.png").convert_alpha()
+        mark_width, mark_height = mark_original.get_size()
+        mark_scale = 60 / mark_height
+        self.mark_sprite = pygame.transform.scale(mark_original, (int(mark_width * mark_scale), 60))
         
         # Load shop keeper sprites (using guy_npc and girl_npc)
         guy_npc_original = pygame.image.load("assets/guy_npc.png").convert_alpha()
@@ -190,9 +190,9 @@ class store(Scene):
             self.save_game()
 
     def draw_characters(self, screen):
-        # Draw Andrew
-        andrew_rect = self.andrew_sprite.get_rect(center=self.player_pos)
-        screen.blit(self.andrew_sprite, andrew_rect)
+        # Draw mark
+        mark_rect = self.mark_sprite.get_rect(center=self.player_pos)
+        screen.blit(self.mark_sprite, mark_rect)
 
         # Draw shop keepers at checkout
         shopkeeper1_rect = self.shopkeeper1_sprite.get_rect(center=self.shopkeeper1_pos)
