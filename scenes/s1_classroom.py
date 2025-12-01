@@ -15,7 +15,8 @@ class classroom(Scene):
         # Initial player position (x, y)
         self.player_pos = pygame.math.Vector2(600, 400)
         # Collision box updated to match Andrew's new size (60 pixels tall)
-        self.player_collision_box = pygame.Rect(self.player_pos.x, self.player_pos.y, 50, 60)
+        # Changed Andrew's hitbox to be around his feet
+        self.player_collision_box = pygame.Rect(self.player_pos.x + 7.5, self.player_pos.y + 30, 15, 30)
         self.player_speed = self.save["bA_speed"]
         
         # Load sprites with proper aspect ratio scaling
@@ -95,9 +96,10 @@ class classroom(Scene):
         self.catch_cooldown_timer = 0.0
         
         # Initialize collision boxes
+        # Reverted collision boxes and changed the hitbox of Andrew instead to be around his feet
         self.collision_boxes = [
-            # Top wall (but allow space above NPCs - reduce height)
-            pygame.Rect(0, 0, 1280, 150),  # Reduced from 196 to allow movement above desks
+            # Top wall
+            pygame.Rect(0, 0, 1280, 196),
             # Bottom wall
             pygame.Rect(0, 577, 1280, 143),
             
@@ -106,11 +108,8 @@ class classroom(Scene):
             pygame.Rect(13, 338, 113, 71),
             pygame.Rect(315, 338, 61, 71),
             
-            # Small Desks - make them smaller to allow movement between
-            # Desk at 210, 160 - split into two smaller boxes to allow passage
-            pygame.Rect(210, 160, 100, 58),  # Left part of desk
-            pygame.Rect(345, 160, 100, 58),  # Right part of desk (gap in middle)
-            # Individual desks - keep them but make sure there's space
+            # Small Desks
+            pygame.Rect(210, 160, 235, 58),
             pygame.Rect(712, 263, 44, 100),
             pygame.Rect(873, 263, 44, 100),
             pygame.Rect(712, 406, 44, 100),
