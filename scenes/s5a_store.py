@@ -106,16 +106,16 @@ class store(Scene):
                         # Check if near candy machine
                         dist_machine = (self.player_pos - self.candy_machine_pos).length()
                         if dist_machine < self.interaction_radius:
-                            self._buy_candy_machine()
+                            self.buy_candy_machine()
                 
                 # Buy menu controls
                 if self.in_buy_menu:
                     if event.key == pygame.K_1:
-                        self._buy_candy("twizzlers", self.candy_prices["twizzlers"])
+                        self.buy_candy("twizzlers", self.candy_prices["twizzlers"])
                     elif event.key == pygame.K_2:
-                        self._buy_candy("Skizzles", self.candy_prices["Skizzles"])
+                        self.buy_candy("Skizzles", self.candy_prices["Skizzles"])
                     elif event.key == pygame.K_3:
-                        self._buy_candy("woozers", self.candy_prices["woozers"])
+                        self.buy_candy("woozers", self.candy_prices["woozers"])
                     elif event.key == pygame.K_PLUS or event.key == pygame.K_EQUALS:
                         self.buy_quantity = min(10, self.buy_quantity + 1)  # Increase
                     elif event.key == pygame.K_MINUS:
@@ -154,7 +154,7 @@ class store(Scene):
         self.draw_clock(screen)
         self.draw_inventory(screen)
 
-    def _buy_candy(self, candy_type, price):
+    def buy_candy(self, candy_type, price):
         """Buy candy from the store"""
         total_cost = price * self.buy_quantity
         
@@ -176,7 +176,7 @@ class store(Scene):
         self.save["candy"][candy_type] += self.buy_quantity
         self.save_game()
     
-    def _buy_candy_machine(self):
+    def buy_candy_machine(self):
         """Buy the candy machine"""
         if self.save.get("has_candy_machine", False):
             return  # Already purchased
