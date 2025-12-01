@@ -29,9 +29,6 @@ SCENES = {
     "costco":costco
 }
 
-
-    #final v3 github test
-
 save = load_save()
 
 pygame.init()
@@ -64,6 +61,3 @@ while running:
     pygame.display.flip()
 
 pygame.quit()
-
-#test from yashas
-# test for yashas

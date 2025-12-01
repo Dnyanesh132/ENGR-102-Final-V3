@@ -3,13 +3,29 @@ from .scene_template import Scene
 
 class hallway(Scene):
     def __init__(self):
-        # Initialize the scene to follow and the duration of the current scene 
-        super().__init__(120, "brother_b_transition")  # 1pm-3pm = 120 seconds
-        
         # Initial player position
-        self.player_pos = pygame.math.Vector2(200, 360)
-        self.player_collision_box = pygame.Rect(self.player_pos.x, self.player_pos.y, 50, 60)
-        self.player_speed = self.save["bA_speed"]
+        initial_pos = pygame.math.Vector2(200, 360)
+        super().__init__(120, "brother_b_transition", "hallway.png", "Andrew", initial_pos)  # 1pm-3pm = 120 seconds
+        
+        # Fonts
+        self.small_font = pygame.font.Font(None, 28)
+        self.title_font = pygame.font.Font(None, 40)
+        
+        # Collision boxes (hallway boundaries and doors)
+        self.collision_boxes = [
+            pygame.Rect(-1, 0, 1, 720),  # Left wall
+            pygame.Rect(0, -1, 1280, 1),  # Top wall
+            pygame.Rect(1280, 0, 1, 720),  # Right wall
+            pygame.Rect(0, 720, 1280, 1),  # Bottom wall
+            # Doors along the wall (approximate positions - adjust based on actual image)
+            pygame.Rect(100, 200, 60, 120),    # Brown door (left)
+            pygame.Rect(200, 200, 80, 120),    # Dark gray double doors
+            pygame.Rect(500, 200, 150, 200),   # Large roll-up door
+            pygame.Rect(700, 200, 60, 120),    # Green door
+            pygame.Rect(1000, 200, 60, 120),   # Red door (right)
+            # Hall monitor collision (if not paid)
+            # Will be added dynamically in update()
+        ]
         
         # Load sprites
         andrew_original = pygame.image.load("assets/andrew.png").convert_alpha()
@@ -43,26 +59,6 @@ class hallway(Scene):
             "Candy Machine": {"price": 200, "purchased": False},
             "Bigger Backpack": {"price": 75, "purchased": False}
         }
-        
-        # Collision boxes (hallway boundaries and doors)
-        self.collision_boxes = [
-            pygame.Rect(-1, 0, 1, 720),  # Left wall
-            pygame.Rect(0, -1, 1280, 1),  # Top wall
-            pygame.Rect(1280, 0, 1, 720),  # Right wall
-            pygame.Rect(0, 720, 1280, 1),  # Bottom wall
-            # Doors along the wall (approximate positions - adjust based on actual image)
-            pygame.Rect(100, 200, 60, 120),    # Brown door (left)
-            pygame.Rect(200, 200, 80, 120),    # Dark gray double doors
-            pygame.Rect(500, 200, 150, 200),   # Large roll-up door
-            pygame.Rect(700, 200, 60, 120),    # Green door
-            pygame.Rect(1000, 200, 60, 120),   # Red door (right)
-            # Hall monitor collision (if not paid)
-            # Will be added dynamically in update()
-        ]
-        
-        # Fonts
-        self.small_font = pygame.font.Font(None, 28)
-        self.title_font = pygame.font.Font(None, 40)
     
     def process_input(self, events):
         super().process_input(events)
@@ -95,49 +91,6 @@ class hallway(Scene):
                         self._buy_item("Bigger Backpack")
                     elif event.key == pygame.K_ESCAPE:
                         self.in_store = False
-    
-    def _pay_hall_monitor(self):
-        """Pay the hall monitor with 1 piece of any candy"""
-        candy = self.save["candy"]
-        
-        # Check for any candy type
-        paid = False
-        if candy.get("twizzlers", 0) > 0:
-            candy["twizzlers"] -= 1
-            paid = True
-        elif candy.get("Skizzles", 0) > 0:
-            candy["Skizzles"] -= 1
-            paid = True
-        elif candy.get("woozers", 0) > 0:
-            candy["woozers"] -= 1
-            paid = True
-        
-        if paid:
-            self.hall_monitor_paid = True
-            self.save_game()
-    
-    def _buy_item(self, item_name):
-        """Buy an item from the store"""
-        if item_name in self.store_items:
-            item = self.store_items[item_name]
-            if not item["purchased"] and self.save["money"] >= item["price"]:
-                self.save["money"] -= item["price"]
-                item["purchased"] = True
-                
-                # Apply item effects and track purchased items
-                if item_name == "Bicycle":
-                    self.save["bB_speed"] = 600.0  # Faster movement for brother
-                    self.save["has_bicycle"] = True
-                elif item_name == "Costco Membership":
-                    self.save["has_costco_membership"] = True
-                elif item_name == "Candy Machine":
-                    self.save["has_candy_machine"] = True
-                    # Will generate 10 candy per day (handled elsewhere)
-                elif item_name == "Bigger Backpack":
-                    self.save["has_bigger_backpack"] = True
-                    # Increase inventory capacity (handled elsewhere)
-                
-                self.save_game()
     
     def update(self, dt):
         super().update(dt)
@@ -183,18 +136,9 @@ class hallway(Scene):
     def render(self, screen):
         super().render(screen)
         
-        # Load background
-        background_image = pygame.image.load("assets/hallway.png").convert_alpha()    
-        
-        if background_image:
-            background_image = pygame.transform.scale(background_image, screen.get_size())
-            screen.blit(background_image, (0, 0))
-        else:
-            # Fallback beige background
-            screen.fill((200, 180, 150))
-            
-        # Draw screen control hints
-        super().screen_hints(screen)
+        # Draw player (Andrew)
+        andrew_rect = self.andrew_sprite.get_rect(center=self.player_pos)
+        screen.blit(self.andrew_sprite, andrew_rect)
         
         # Draw physical barrier if not paid (full width)
         if not self.hall_monitor_paid:
@@ -255,9 +199,7 @@ class hallway(Scene):
                 hint_rect = hint_surface.get_rect(center=(self.store_pos.x, self.store_pos.y - 50))
                 screen.blit(hint_surface, hint_rect)
         
-        # Draw player (Andrew)
-        andrew_rect = self.andrew_sprite.get_rect(center=self.player_pos)
-        screen.blit(self.andrew_sprite, andrew_rect)
+        
         
         # Draw store UI
         if self.in_store:
@@ -331,3 +273,46 @@ class hallway(Scene):
         
         # Draw persistent inventory if toggled
         self.draw_inventory(screen)
+
+    def _pay_hall_monitor(self):
+        """Pay the hall monitor with 1 piece of any candy"""
+        candy = self.save["candy"]
+        
+        # Check for any candy type
+        paid = False
+        if candy.get("twizzlers", 0) > 0:
+            candy["twizzlers"] -= 1
+            paid = True
+        elif candy.get("Skizzles", 0) > 0:
+            candy["Skizzles"] -= 1
+            paid = True
+        elif candy.get("woozers", 0) > 0:
+            candy["woozers"] -= 1
+            paid = True
+        
+        if paid:
+            self.hall_monitor_paid = True
+            self.save_game()
+    
+    def _buy_item(self, item_name):
+        """Buy an item from the store"""
+        if item_name in self.store_items:
+            item = self.store_items[item_name]
+            if not item["purchased"] and self.save["money"] >= item["price"]:
+                self.save["money"] -= item["price"]
+                item["purchased"] = True
+                
+                # Apply item effects and track purchased items
+                if item_name == "Bicycle":
+                    self.save["bB_speed"] = 600.0  # Faster movement for brother
+                    self.save["has_bicycle"] = True
+                elif item_name == "Costco Membership":
+                    self.save["has_costco_membership"] = True
+                elif item_name == "Candy Machine":
+                    self.save["has_candy_machine"] = True
+                    # Will generate 10 candy per day (handled elsewhere)
+                elif item_name == "Bigger Backpack":
+                    self.save["has_bigger_backpack"] = True
+                    # Increase inventory capacity (handled elsewhere)
+                
+                self.save_game()
