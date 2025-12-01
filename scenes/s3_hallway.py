@@ -297,7 +297,7 @@ class hallway(Scene):
                 # Item description
                 descriptions = {
                     "Bicycle": "Helps your brother use less time traveling",
-                    "Costco Membership": "Bulk candy deals",
+                    "Costco Membership": "Bulk candy deals (PS5 can be bought here)",
                     "Candy Machine": "Generates 10 free candy/day",
                     "Bigger Backpack": "Carry more items"
                 }
@@ -331,3 +331,6 @@ class hallway(Scene):
         screen.blit(text, (20, 20))
         
         self.display_counters(screen)
+        
+        # Draw persistent inventory if toggled
+        self.draw_inventory(screen)

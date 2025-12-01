@@ -5,6 +5,7 @@ from scenes.c0_instructions import instructions_screen
 from scenes.c1_title_screen import title_screen
 from scenes.c2_intro import intro
 from scenes.c3_ending import ending
+from scenes.c4_brother_a_transition import brother_a_transition
 from scenes.s1_classroom import classroom
 from scenes.s2_playground import playground
 from scenes.s3_hallway import hallway
@@ -17,6 +18,7 @@ SCENES = {
     "title_screen":title_screen,
     "intro":intro,
     "ending":ending,
+    "brother_a_transition":brother_a_transition,
     "classroom":classroom,
     "playground":playground,
     "hallway":hallway,
@@ -47,10 +49,8 @@ while running:
     for event in events:
         if event.type == pygame.QUIT:
             running = False
-    
-    # Use escape key to QUIT
-    if keys[pygame.K_ESCAPE]:
-        running = False
+        # ESC is handled by scenes (for closing menus, etc.)
+        # To quit the game, use the window close button
 
     current_scene.process_input(events)
     current_scene.update(dt)

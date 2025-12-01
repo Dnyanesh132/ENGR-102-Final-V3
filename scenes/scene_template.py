@@ -52,11 +52,15 @@ class Scene:
         if keys[pygame.K_DOWN]:
             self.movement.y = 1
         
-        # Toggle inventory with I key
+        # Toggle inventory with I key, skip time with period key
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_i:
                     self.show_inventory = not self.show_inventory
+                elif event.key == pygame.K_PERIOD:
+                    # Skip 15 seconds (for debugging)
+                    if self.duration is not None:
+                        self.timer += 15
     
     def update(self, dt):
         """This function handles the game logic on what should be updated. It should move objects, animate sprites, check for collisions,
@@ -100,6 +104,17 @@ class Scene:
             screen (Surface): The window that displays the game.
         """
         screen.fill((0,0,0))   # Clears the screen
+        
+        # Draw persistent control hints (shown everywhere)
+        hints_y = 60
+        hint_bg = pygame.Rect(10, hints_y - 5, 300, 50)
+        hint_surface = pygame.Surface((hint_bg.width, hint_bg.height), pygame.SRCALPHA)
+        hint_surface.fill((0, 0, 0, 150))
+        screen.blit(hint_surface, hint_bg)
+        
+        controls_text = "[.] Fast Forward 15s  |  [I] Inventory"
+        controls_surface = self.small_font.render(controls_text, True, (200, 200, 255))
+        screen.blit(controls_surface, (20, hints_y))
 
     def display_counters(self, screen):
         WHITE = (255, 255, 255)
