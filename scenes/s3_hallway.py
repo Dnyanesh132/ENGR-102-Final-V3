@@ -66,7 +66,9 @@ class hallway(Scene):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_e:
+
                     # Interact with hall monitor or store
+                    
                     if not self.hall_monitor_paid:
                         # Check if near hall monitor
                         distance = (self.player_pos - self.hall_monitor_pos).length()
@@ -135,11 +137,61 @@ class hallway(Scene):
     
     def render(self, screen):
         super().render(screen)
+
+        self.draw_characters(screen)
+        self.draw_hall_monitor_interaction_hint(screen)
+        self.draw_store_interaction_hint(screen)
+        self.draw_barrier(screen)
+        self.draw_store_UI(screen)
         
+        self.draw_clock(screen)
+        self.draw_inventory(screen)
+
+    def draw_characters(self, screen):
         # Draw player (Andrew)
         andrew_rect = self.andrew_sprite.get_rect(center=self.player_pos)
         screen.blit(self.andrew_sprite, andrew_rect)
-        
+
+        # Draw hall monitor
+        monitor_rect = self.hall_monitor_sprite.get_rect(center=self.hall_monitor_pos)
+        screen.blit(self.hall_monitor_sprite, monitor_rect)
+
+        # Draw principal's son (store)
+        son_rect = self.principal_son_sprite.get_rect(center=self.store_pos)
+        screen.blit(self.principal_son_sprite, son_rect)
+
+    def draw_hall_monitor_interaction_hint(self, screen):
+        # Draw interaction hint for hall monitor
+        if not self.hall_monitor_paid:
+            distance = (self.player_pos - self.hall_monitor_pos).length()
+            if distance < self.interaction_radius:
+                hint_text = "Press E - Pay 1 candy to pass"
+                hint_surface = self.font.render(hint_text, True, (255, 255, 0))
+                hint_rect = hint_surface.get_rect(center=(self.hall_monitor_pos.x, self.hall_monitor_pos.y - 50))
+                screen.blit(hint_surface, hint_rect)
+                
+                # Show dialogue
+                dialogue = '"You gotta pay the candy toll, buddy."'
+                dialogue_surface = self.small_font.render(dialogue, True, (255, 255, 255))
+                dialogue_rect = dialogue_surface.get_rect(center=(self.hall_monitor_pos.x, self.hall_monitor_pos.y - 80))
+                screen.blit(dialogue_surface, dialogue_rect)
+        else:
+            # Hall monitor looks away
+            away_text = self.small_font.render("(Looking away)", True, (150, 150, 150))
+            away_rect = away_text.get_rect(center=(self.hall_monitor_pos.x, self.hall_monitor_pos.y - 50))
+            screen.blit(away_text, away_rect)
+
+    def draw_store_interaction_hint(self, screen):
+        # Draw store interaction hint
+        if self.hall_monitor_paid:
+            distance = (self.player_pos - self.store_pos).length()
+            if distance < self.interaction_radius and not self.in_store:
+                hint_text = "Press E - Visit Store"
+                hint_surface = self.font.render(hint_text, True, (255, 255, 0))
+                hint_rect = hint_surface.get_rect(center=(self.store_pos.x, self.store_pos.y - 50))
+                screen.blit(hint_surface, hint_rect)
+
+    def draw_barrier(self, screen):
         # Draw physical barrier if not paid (full width)
         if not self.hall_monitor_paid:
             # Draw a visible barrier/block spanning full hallway width
@@ -161,46 +213,8 @@ class hallway(Scene):
             blocked_text = self.font.render("BLOCKED - Pay toll to pass", True, (255, 255, 255))
             blocked_rect = blocked_text.get_rect(center=barrier_rect.center)
             screen.blit(blocked_text, blocked_rect)
-        
-        # Draw hall monitor
-        monitor_rect = self.hall_monitor_sprite.get_rect(center=self.hall_monitor_pos)
-        screen.blit(self.hall_monitor_sprite, monitor_rect)
-        
-        # Draw interaction hint for hall monitor
-        if not self.hall_monitor_paid:
-            distance = (self.player_pos - self.hall_monitor_pos).length()
-            if distance < self.interaction_radius:
-                hint_text = "Press E - Pay 1 candy to pass"
-                hint_surface = self.font.render(hint_text, True, (255, 255, 0))
-                hint_rect = hint_surface.get_rect(center=(self.hall_monitor_pos.x, self.hall_monitor_pos.y - 50))
-                screen.blit(hint_surface, hint_rect)
-                
-                # Show dialogue
-                dialogue = '"You gotta pay the candy toll, buddy."'
-                dialogue_surface = self.small_font.render(dialogue, True, (255, 255, 255))
-                dialogue_rect = dialogue_surface.get_rect(center=(self.hall_monitor_pos.x, self.hall_monitor_pos.y - 80))
-                screen.blit(dialogue_surface, dialogue_rect)
-        else:
-            # Hall monitor looks away
-            away_text = self.small_font.render("(Looking away)", True, (150, 150, 150))
-            away_rect = away_text.get_rect(center=(self.hall_monitor_pos.x, self.hall_monitor_pos.y - 50))
-            screen.blit(away_text, away_rect)
-        
-        # Draw principal's son (store)
-        son_rect = self.principal_son_sprite.get_rect(center=self.store_pos)
-        screen.blit(self.principal_son_sprite, son_rect)
-        
-        # Draw store interaction hint
-        if self.hall_monitor_paid:
-            distance = (self.player_pos - self.store_pos).length()
-            if distance < self.interaction_radius and not self.in_store:
-                hint_text = "Press E - Visit Store"
-                hint_surface = self.font.render(hint_text, True, (255, 255, 0))
-                hint_rect = hint_surface.get_rect(center=(self.store_pos.x, self.store_pos.y - 50))
-                screen.blit(hint_surface, hint_rect)
-        
-        
-        
+
+    def draw_store_UI(self, screen):
         # Draw store UI
         if self.in_store:
             # Dim background
@@ -252,27 +266,6 @@ class hallway(Scene):
             inst_surface = self.small_font.render(inst_text, True, (255, 255, 0))
             inst_rect = inst_surface.get_rect(center=(box_x + box_w // 2, box_y + box_h - 30))
             screen.blit(inst_surface, inst_rect)
-        
-        # Draw countdown clock
-        time_remaining = self.duration - self.timer
-        minutes = int(time_remaining // 60)
-        seconds = int(time_remaining % 60)
-        clock_text = f"Time: {minutes:02d}:{seconds:02d}"
-        clock_surface = self.font.render(clock_text, True, (255, 255, 255))
-        clock_rect = clock_surface.get_rect(bottomright=(screen.get_width() - 20, screen.get_height() - 20))
-        clock_bg = pygame.Rect(clock_rect.x - 10, clock_rect.y - 5, clock_rect.width + 20, clock_rect.height + 10)
-        pygame.draw.rect(screen, (0, 0, 0, 180), clock_bg)
-        pygame.draw.rect(screen, (255, 255, 255), clock_bg, 2)
-        screen.blit(clock_surface, clock_rect)
-        
-        # Draw UI text
-        text = self.font.render("Hallway", True, (0, 0, 0))
-        screen.blit(text, (20, 20))
-        
-        self.display_counters(screen)
-        
-        # Draw persistent inventory if toggled
-        self.draw_inventory(screen)
 
     def _pay_hall_monitor(self):
         """Pay the hall monitor with 1 piece of any candy"""

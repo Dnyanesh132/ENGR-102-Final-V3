@@ -130,6 +130,8 @@ class classroom(Scene):
         # Handle E key for talking to students
         for event in events:
             if event.type == pygame.KEYDOWN:
+
+                # Interacting with NPCs
                 if event.key == pygame.K_e and not self.in_naughty_corner and not self.in_negotiation:
                     # Check if player is near any NPC
                     for npc in self.npcs:
@@ -148,6 +150,7 @@ class classroom(Scene):
                                     k=random.randint(3, 5)
                                 )
                                 break
+                
                 
                 # Handle negotiation input
                 if self.in_negotiation and event.key in [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT]:

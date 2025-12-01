@@ -1,9 +1,8 @@
 import pygame
 from save_manager import load_save, save_data
 
-from scenes.c0_instructions import instructions_screen
 from scenes.c1_title_screen import title_screen
-from scenes.c2_intro import intro
+from scenes.c2_instructions import instructions_screen
 from scenes.c3_ending import ending
 from scenes.c4_brother_a_transition import brother_a_transition
 from scenes.c5_brother_b_transition import brother_b_transition
@@ -15,9 +14,8 @@ from scenes.s5a_store import store
 from scenes.s5b_costco import costco
 
 SCENES = {
-    "instructions":instructions_screen,
     "title_screen":title_screen,
-    "intro":intro,
+    "instructions":instructions_screen,
     "ending":ending,
     "brother_a_transition":brother_a_transition,
     "classroom":classroom,

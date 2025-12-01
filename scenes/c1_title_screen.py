@@ -7,14 +7,14 @@ from .ui_button import Button
 '''
 class title_screen(Scene):
     def __init__(self):
-        super().__init__(None, "intro")
+        super().__init__(None, "brother_a_transition")
 
     def process_input(self, events):
         super().process_input(events)
         
         for e in events:
             if e.type == pygame.KEYDOWN:
-                self.switch_to("intro")
+                self.switch_to("brother_a_transition")
 
     def render(self, screen):
         super().render(screen)
@@ -93,7 +93,7 @@ class title_screen(Scene):
                         # Reset save to default values for new game
                         from save_manager import DEFAULT_DATA, save_data
                         save_data(DEFAULT_DATA.copy())
-                        self.switch_to("intro")
+                        self.switch_to("brother_a_transition")
                     elif btn == self.load_btn:
                         self.switch_to("load_save")  # you'll create this scene
                     elif btn == self.instructions_btn:

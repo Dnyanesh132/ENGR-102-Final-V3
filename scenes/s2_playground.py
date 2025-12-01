@@ -30,7 +30,7 @@ class playground(Scene):
             # Sandbox (foreground)
         ]
         
-        # Load sprites
+        # Load Sprites
         
         # Load Brother A
         andrew_original = pygame.image.load("assets/andrew.png").convert_alpha()
@@ -51,7 +51,6 @@ class playground(Scene):
         self.small_bully_sprite = pygame.transform.scale(small_bully_original, (int(small_bully_width * small_bully_scale)/40 * 85, 85))
         
         # Load other student npcs
-        
         guy_npc_original = pygame.image.load("assets/guy_npc.png").convert_alpha()
         guy_width, guy_height = guy_npc_original.get_size()
         guy_scale = 45 / guy_height
@@ -62,6 +61,7 @@ class playground(Scene):
         girl_scale = 45 / girl_height
         self.girl_npc_sprite = pygame.transform.scale(girl_npc_original, (int(girl_width * girl_scale)/45 * 85, 85))
         
+
         # Get number of buyers from classroom negotiations (ensure it persists)
         self.num_buyers = max(0, self.save.get("buyers", 0))  # Ensure it doesn't go negative
         
@@ -87,6 +87,7 @@ class playground(Scene):
                 "is_girl": is_girl
             })
         
+
         # Create random NPCs (non-buyers, just for atmosphere) - max 12 random NPCs
         num_random_npcs = min(12, random.randint(8, 12))
         self.random_npcs = []
@@ -100,6 +101,7 @@ class playground(Scene):
                 "is_girl": is_girl
             })
         
+
         # Create exactly 8 bullies (mix of big and small)
         num_bullies = 8
         self.bullies = []
@@ -117,6 +119,7 @@ class playground(Scene):
                 "is_big": is_big
             })
         
+
         # Selling mechanics
         self.sell_quantity = 1  # Amount to sell per transaction
         self.interaction_radius = 60
