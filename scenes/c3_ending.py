@@ -65,10 +65,10 @@ class ending(Scene):
                 continue
             
             # Choose font based on line
-            if i == 0:  # "GAME COMPLETED!"
+            if i == 0:  # if game is completed
                 font = title_font
                 color = (255, 255, 0)
-            elif i == 4:  # "CREDITS"
+            elif i == 4:  #credit scence
                 font = large_font
                 color = (255, 215, 0)
             else:
