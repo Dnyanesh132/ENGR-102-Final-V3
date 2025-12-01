@@ -24,7 +24,7 @@ class street(Scene):
         ]
         
         # Load Andrew's sprite
-        andrew_original = pygame.image.load("assets/mark.png").convert_alpha()
+        andrew_original = pygame.image.load("assets/andrew.png").convert_alpha()
         andrew_width, andrew_height = andrew_original.get_size()
         andrew_scale = 60 / andrew_height
         self.andrew_sprite = pygame.transform.scale(andrew_original, (int(andrew_width * andrew_scale), 60))
@@ -118,6 +118,13 @@ class street(Scene):
                     self.rhythm_can_press = False
                     self.timer += 30
     
+    def render(self, screen):
+        super().render(screen, "Road")
+
+        self.draw_rhythm_game_UI(screen)
+        self.draw_clock(screen)
+        self.draw_inventory(screen)
+
     def handle_rhythm_key(self, key_name):
         """Handle rhythm game key press - must alternate LEFT/RIGHT and be timed correctly"""
         # Can only press during the press window
@@ -181,13 +188,6 @@ class street(Scene):
         self.rhythm_countdown_duration = random.uniform(0.5, 1.5)  # Random between 0.5-1.5 seconds
         self.rhythm_can_press = False
         self.rhythm_press_window_timer = 0.0
-
-    def render(self, screen):
-        super().render(screen, "Road")
-
-        self.draw_rhythm_game_UI(screen)
-        self.draw_clock(screen)
-        self.draw_inventory(screen)
 
     def draw_rhythm_game_UI(self, screen):
         if self.in_rhythm_game:

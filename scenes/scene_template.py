@@ -24,8 +24,8 @@ class Scene:
         self.save = load_save()
         self.show_inventory = False
         
-        
         self.player_pos = initial_pos
+        
         # Collision box and speed for respective brother
         if(brother_name == "Andrew"):
             self.player_collision_box = pygame.Rect(self.player_pos.x + 7.5, self.player_pos.y + 30, 15, 30)
