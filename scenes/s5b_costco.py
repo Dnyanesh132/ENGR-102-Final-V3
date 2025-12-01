@@ -179,7 +179,7 @@ class costco(Scene):
         self.save_game()
     
     def _buy_ps5(self):
-        """Buy the PS5 - ends the game!"""
+        """Buy the PS5 which ends the game!"""
         if self.save.get("has_ps5", False):
             return  # Already purchased
         
