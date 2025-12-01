@@ -158,7 +158,7 @@ class classroom(Scene):
                     if event.key == self.negotiation_sequence[self.negotiation_current_index]:
                         self.negotiation_current_index += 1
                         if self.negotiation_current_index >= len(self.negotiation_sequence):
-                            # Success! Add buyer
+                            # Success so add a buyer
                             self.save["buyers"] += 1
                             if self.negotiation_target_npc:
                                 self.negotiation_target_npc["talked"] = True
@@ -166,7 +166,7 @@ class classroom(Scene):
                             self.negotiation_target_npc = None
                             self.save_game()  # Save buyers immediately
                     else:
-                        # Wrong key - negotiation failed
+                        # Wrong key so negotiation failed
                         self.in_negotiation = False
                         self.negotiation_target_npc = None
                         self.negotiation_current_index = 0
@@ -178,7 +178,7 @@ class classroom(Scene):
         if self.in_negotiation:
             self.negotiation_timer += dt
             if self.negotiation_timer >= self.negotiation_duration:
-                # Time ran out - negotiation failed
+                # Time ran out so negotiation failed
                 self.in_negotiation = False
                 self.negotiation_target_npc = None
                 self.negotiation_current_index = 0
@@ -204,7 +204,7 @@ class classroom(Scene):
                 self.just_caught = True
                 self.catch_cooldown_timer = 0.0
         else:
-            # Update teacher's vision circle - zig-zag pattern (always moving, even during negotiation)
+            # Update teacher's vision circle which is a zig-zag pattern (always moving, even during negotiation)
             self.vision_x += self.vision_speed_x * self.vision_direction_x * dt
             self.vision_y += self.vision_speed_y * self.vision_direction_y * dt
             
@@ -252,7 +252,7 @@ class classroom(Scene):
         background_image = pygame.transform.scale(background_image, screen.get_size())
         screen.blit(background_image, (0, 0))
         
-        # Draw teacher's vision circle (semi-transparent red) - zig-zag pattern
+        # Draw teacher's vision circle (semi-transparent red) in a zig-zag pattern
         vision_surface = pygame.Surface((self.vision_radius * 2, self.vision_radius * 2), pygame.SRCALPHA)
         pygame.draw.circle(vision_surface, (255, 0, 0, 100), (self.vision_radius, self.vision_radius), self.vision_radius)
         vision_rect = vision_surface.get_rect(center=(self.vision_x, self.vision_y))
