@@ -27,13 +27,7 @@ class title_screen(Scene):
 
 class title_screen(Scene):
     def __init__(self):
-        super().__init__(None, "brother_a_transition")
-
-        # Background image (replace file path with your own)
-        self.background = pygame.image.load("assets/backgrounds/title_bg.png").convert()
-        
-        # Scale background to screen size later in render()
-        self.bg_scaled = None
+        super().__init__(None, "brother_a_transition", "title_bg.png")
 
         # Fonts
         self.title_font = pygame.font.Font(None, 120)
@@ -112,13 +106,6 @@ class title_screen(Scene):
 
     def render(self, screen):
         super().render(screen)
-
-        # Scale background if not done yet
-        if self.bg_scaled is None:
-            self.bg_scaled = pygame.transform.scale(self.background, screen.get_size())
-
-        # Draw background
-        screen.blit(self.bg_scaled, (0, 0))
 
         # Title text
         title_surf = self.title_font.render("SUGAR RUSH", True, (255, 215, 0))
