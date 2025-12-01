@@ -136,7 +136,7 @@ class hallway(Scene):
         super().move(dt)
     
     def render(self, screen):
-        super().render(screen)
+        super().render(screen, "Hallway")
 
         self.draw_characters(screen)
         self.draw_hall_monitor_interaction_hint(screen)

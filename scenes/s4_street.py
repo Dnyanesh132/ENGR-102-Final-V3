@@ -27,7 +27,7 @@ class street(Scene):
         andrew_original = pygame.image.load("assets/mark.png").convert_alpha()
         andrew_width, andrew_height = andrew_original.get_size()
         andrew_scale = 60 / andrew_height
-        self.mark_sprite = pygame.transform.scale(andrew_original, (int(andrew_width * andrew_scale), 60))
+        self.andrew_sprite = pygame.transform.scale(andrew_original, (int(andrew_width * andrew_scale), 60))
         
         # Rhythm walking mini-game state
         self.in_rhythm_game = True  # Start in rhythm game
@@ -68,73 +68,9 @@ class street(Scene):
                 # Skip time is handled in base Scene class
                 if self.in_rhythm_game and not self.rhythm_failed:
                     if event.key == pygame.K_LEFT:
-                        self._handle_rhythm_key("LEFT")
+                        self.handle_rhythm_key("LEFT")
                     elif event.key == pygame.K_RIGHT:
-                        self._handle_rhythm_key("RIGHT")
-    
-    def _handle_rhythm_key(self, key_name):
-        """Handle rhythm game key press - must alternate LEFT/RIGHT and be timed correctly"""
-        # Can only press during the press window
-        if not self.rhythm_can_press:
-            # Pressed too early or too late - fail!
-            self.rhythm_failed = True
-            self.rhythm_fail_timer = 0.0
-            self.rhythm_steps_completed = 0
-            self.rhythm_last_key = None
-            self.rhythm_waiting_for_key = True
-            self.rhythm_countdown_active = False
-            self.rhythm_can_press = False
-            self.timer += 30
-            return
-        
-        # Check if alternating correctly
-        if self.rhythm_waiting_for_key:
-            # First key press - just record it
-            self.rhythm_last_key = key_name
-            self.rhythm_waiting_for_key = False
-            self.rhythm_steps_completed += 1
-            # Start next countdown
-            self._start_next_countdown()
-        else:
-            # Must alternate
-            if key_name != self.rhythm_last_key:
-                # Correct! Alternate key pressed
-                self.rhythm_last_key = key_name
-                self.rhythm_steps_completed += 1
-                self.rhythm_can_press = False  # Reset press window
-                
-                # Check if completed
-                if self.rhythm_steps_completed >= self.rhythm_target_steps:
-                    # Success! Exit rhythm game and transition immediately
-                    self.in_rhythm_game = False
-                    self.rhythm_game_completed = True
-                    # Save remaining time and transition to store/costco
-                    remaining_time = max(0, self.duration - self.timer)
-                    self.save["brother_b_remaining_time"] = remaining_time
-                    self.save_game()
-                    self.switch_to(self.default_next_scene)
-                else:
-                    # Start next countdown
-                    self._start_next_countdown()
-            else:
-                # Failed! Same key pressed twice in a row
-                self.rhythm_failed = True
-                self.rhythm_fail_timer = 0.0
-                self.rhythm_steps_completed = 0
-                self.rhythm_last_key = None
-                self.rhythm_waiting_for_key = True
-                self.rhythm_countdown_active = False
-                self.rhythm_can_press = False
-                self.timer += 30
-    
-    def _start_next_countdown(self):
-        """Start a new random countdown before next key press"""
-        import random
-        self.rhythm_countdown_active = True
-        self.rhythm_countdown_timer = 0.0
-        self.rhythm_countdown_duration = random.uniform(0.5, 1.5)  # Random between 0.5-1.5 seconds
-        self.rhythm_can_press = False
-        self.rhythm_press_window_timer = 0.0
+                        self.handle_rhythm_key("RIGHT")
     
     def update(self, dt):
         # Update timer manually (don't call super().update() to prevent auto-transition)
@@ -147,7 +83,7 @@ class street(Scene):
                     # Failed to complete rhythm game in time - go straight to Brother A
                     self.switch_to("brother_a_transition")
                     return
-                # If completed, the transition already happened in _handle_rhythm_key
+                # If completed, the transition already happened in handle_rhythm_key
                 return
         
         # Update rhythm game failure timer
@@ -158,7 +94,7 @@ class street(Scene):
                 self.rhythm_fail_timer = 0.0
                 # Restart countdown after failure
                 if self.in_rhythm_game:
-                    self._start_next_countdown()
+                    self.start_next_countdown()
         
         # Update rhythm countdown timing
         if self.in_rhythm_game and not self.rhythm_failed and self.rhythm_countdown_active:
@@ -181,68 +117,138 @@ class street(Scene):
                     self.rhythm_countdown_active = False
                     self.rhythm_can_press = False
                     self.timer += 30
-        
-        # Movement is disabled during rhythm game
-        # When rhythm game completes, transition happens immediately in _handle_rhythm_key
     
+    def handle_rhythm_key(self, key_name):
+        """Handle rhythm game key press - must alternate LEFT/RIGHT and be timed correctly"""
+        # Can only press during the press window
+        if not self.rhythm_can_press:
+            # Pressed too early or too late = fail
+            self.rhythm_failed = True
+            self.rhythm_fail_timer = 0.0
+            self.rhythm_steps_completed = 0
+            self.rhythm_last_key = None
+            self.rhythm_waiting_for_key = True
+            self.rhythm_countdown_active = False
+            self.rhythm_can_press = False
+            self.timer += 30
+            return
+        
+        # Check if alternating correctly
+        if self.rhythm_waiting_for_key:
+            # Record first key press
+            self.rhythm_last_key = key_name
+            self.rhythm_waiting_for_key = False
+            self.rhythm_steps_completed += 1
+            # Start next countdown
+            self.start_next_countdown()
+        else:
+            # Must alternate
+            if key_name != self.rhythm_last_key:
+                # Corretly pressed alternate key
+                self.rhythm_last_key = key_name
+                self.rhythm_steps_completed += 1
+                self.rhythm_can_press = False  # Reset press window
+                
+                # Check if completed
+                if self.rhythm_steps_completed >= self.rhythm_target_steps:
+                    # Exit rhythm game
+                    self.in_rhythm_game = False
+                    self.rhythm_game_completed = True
+                    # Save remaining time and transition to store/costco
+                    remaining_time = max(0, self.duration - self.timer)
+                    self.save["brother_b_remaining_time"] = remaining_time
+                    self.save_game()
+                    self.switch_to(self.default_next_scene)
+                else:
+                    # Start next countdown
+                    self.start_next_countdown()
+            else:
+                # Failed, pressed same rhythm key in a row
+                self.rhythm_failed = True
+                self.rhythm_fail_timer = 0.0
+                self.rhythm_steps_completed = 0
+                self.rhythm_last_key = None
+                self.rhythm_waiting_for_key = True
+                self.rhythm_countdown_active = False
+                self.rhythm_can_press = False
+                self.timer += 30
+    
+    def start_next_countdown(self):
+        """Start a new random countdown before next key press"""
+        import random
+        self.rhythm_countdown_active = True
+        self.rhythm_countdown_timer = 0.0
+        self.rhythm_countdown_duration = random.uniform(0.5, 1.5)  # Random between 0.5-1.5 seconds
+        self.rhythm_can_press = False
+        self.rhythm_press_window_timer = 0.0
+
     def render(self, screen):
-        super().render(screen)
-        
-        # Load road background
-        try:
-            background_image = pygame.image.load("assets/road.png").convert_alpha()
-            background_image = pygame.transform.scale(background_image, screen.get_size())
-            screen.blit(background_image, (0, 0))
-        except:
-            # Fallback gray road background
-            screen.fill((100, 100, 100))
-            # Draw road lines
-            for y in range(0, 720, 40):
-                pygame.draw.line(screen, (255, 255, 255), (0, y), (1280, y), 2)
-        
-        # Draw screen control hints
-        super().screen_hints(screen)
-        
-        # Draw rhythm game UI
+        super().render(screen, "Road")
+
+        self.draw_rhythm_game_UI(screen)
+        self.draw_clock(screen)
+        self.draw_inventory(screen)
+
+    def draw_rhythm_game_UI(self, screen):
         if self.in_rhythm_game:
-            # Dim background
+            self.dim_background(screen)
+            
+            # Dimesions of the game box
+            boxw, boxh = 600, 400
+            boxx = (screen.get_width() - boxw) // 2
+            boxy = (screen.get_height() - boxh) // 2
+
+            self.draw_game_box(screen, boxx, boxy, boxw, boxh)
+            self.draw_game_title(screen, boxx, boxy, boxw, boxh)
+            self.draw_game_instructions(screen, boxx, boxy, boxw, boxh)
+            self.draw_game_progress(screen, boxx, boxy, boxw, boxh)
+            self.draw_game_countdown(screen, boxx, boxy, boxw, boxh)
+            self.draw_game_fail(screen, boxx, boxy, boxw, boxh)
+        else:
+            # Rhythm game completed
+            self.draw_andrew_moving(screen)            
+            self.draw_completion_message(screen)
+        
+    def dim_background(self, screen):
+        # Dim background
             overlay = pygame.Surface(screen.get_size())
             overlay.set_alpha(150)
             overlay.fill((0, 0, 0))
             screen.blit(overlay, (0, 0))
-            
-            # Rhythm game box
-            box_w, box_h = 600, 400
-            box_x = (screen.get_width() - box_w) // 2
-            box_y = (screen.get_height() - box_h) // 2
+
+    def draw_game_box(self, screen, box_x, box_y, box_w, box_h):
+        # Rhythm game box
             box_rect = pygame.Rect(box_x, box_y, box_w, box_h)
             pygame.draw.rect(screen, (30, 30, 30), box_rect)
             pygame.draw.rect(screen, (255, 255, 255), box_rect, 4)
-            
-            # Title
+
+    def draw_game_title(self, screen, box_x, box_y, box_w, box_h):
+        # Title
             title_text = "RHYTHM WALKING"
             if self.save.get("has_bicycle", False):
                 title_text = "RHYTHM BIKING"
             title_surface = self.large_font.render(title_text, True, (255, 255, 0))
             title_rect = title_surface.get_rect(center=(box_x + box_w // 2, box_y + 50))
             screen.blit(title_surface, title_rect)
-            
-            # Instructions
+    
+    def draw_game_instructions(self, screen, box_x, box_y, box_w, box_h):
+        # Instructions
             inst_text = "Alternate LEFT and RIGHT arrow keys"
             inst_surface = self.font.render(inst_text, True, (255, 255, 255))
             inst_rect = inst_surface.get_rect(center=(box_x + box_w // 2, box_y + 120))
             screen.blit(inst_surface, inst_rect)
-            
-            # Progress
+
+    def draw_game_progress(self, screen, box_x, box_y, box_w, box_h):
+        # Progress
             progress_text = f"Steps: {self.rhythm_steps_completed} / {self.rhythm_target_steps}"
             progress_surface = self.large_font.render(progress_text, True, (0, 255, 0))
             progress_rect = progress_surface.get_rect(center=(box_x + box_w // 2, box_y + 200))
             screen.blit(progress_surface, progress_rect)
-            
-            # Countdown and timing hint
+
+    def draw_game_countdown(self, screen, box_x, box_y, box_w, box_h):
+        # Countdown and timing hint
             if self.rhythm_countdown_active and not self.rhythm_can_press:
                 # Show countdown
-                countdown_progress = self.rhythm_countdown_timer / self.rhythm_countdown_duration
                 countdown_text = f"Wait... {self.rhythm_countdown_duration - self.rhythm_countdown_timer:.1f}s"
                 countdown_surface = self.font.render(countdown_text, True, (200, 200, 200))
                 countdown_rect = countdown_surface.get_rect(center=(box_x + box_w // 2, box_y + 260))
@@ -269,8 +275,9 @@ class street(Scene):
                 start_surface = self.font.render(start_text, True, (200, 200, 255))
                 start_rect = start_surface.get_rect(center=(box_x + box_w // 2, box_y + 260))
                 screen.blit(start_surface, start_rect)
-            
-            # Failure message
+
+    def draw_game_fail(self, screen, box_x, box_y, box_w, box_h):
+         # Failure message
             if self.rhythm_failed:
                 fail_text = "FAILED! Mark fell down. Restarting..."
                 fail_surface = self.large_font.render(fail_text, True, (255, 0, 0))
@@ -281,36 +288,16 @@ class street(Scene):
                 penalty_surface = self.small_font.render(penalty_text, True, (255, 100, 100))
                 penalty_rect = penalty_surface.get_rect(center=(box_x + box_w // 2, box_y + 360))
                 screen.blit(penalty_surface, penalty_rect)
-        else:
-            # Rhythm game complete - show walking animation
-            # Draw player (Mark) moving across screen
-            mark_rect = self.mark_sprite.get_rect(center=self.player_pos)
-            screen.blit(self.mark_sprite, mark_rect)
-            
-            # Show completion message briefly
+
+    def draw_andrew_moving(self, screen):
+         # Draw Andrew moving across screen
+            andrew_rect = self.andrew_sprite.get_rect(center=self.player_pos)
+            screen.blit(self.andrew_sprite, andrew_rect)
+
+    def draw_completion_message(self, screen):
+         # Show completion message briefly
             if self.timer < 2.0:  # Show for first 2 seconds after completion
                 complete_text = "Walking to store..."
                 complete_surface = self.font.render(complete_text, True, (0, 255, 0))
                 complete_rect = complete_surface.get_rect(center=(screen.get_width() // 2, 100))
                 screen.blit(complete_surface, complete_rect)
-        
-        # Draw countdown clock
-        time_remaining = self.duration - self.timer
-        minutes = int(time_remaining // 60)
-        seconds = int(time_remaining % 60)
-        clock_text = f"Time: {minutes:02d}:{seconds:02d}"
-        clock_surface = self.font.render(clock_text, True, (255, 255, 255))
-        clock_rect = clock_surface.get_rect(bottomright=(screen.get_width() - 20, screen.get_height() - 20))
-        clock_bg = pygame.Rect(clock_rect.x - 10, clock_rect.y - 5, clock_rect.width + 20, clock_rect.height + 10)
-        pygame.draw.rect(screen, (0, 0, 0, 180), clock_bg)
-        pygame.draw.rect(screen, (255, 255, 255), clock_bg, 2)
-        screen.blit(clock_surface, clock_rect)
-        
-        # Draw UI text
-        text = self.font.render("Brother Mark's Turn - Road", True, (0, 0, 0))
-        screen.blit(text, (20, 20))
-        
-        self.display_counters(screen)
-        
-        # Draw persistent inventory if toggled
-        self.draw_inventory(screen)
