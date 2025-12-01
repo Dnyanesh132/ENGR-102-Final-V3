@@ -128,19 +128,36 @@ class playground(Scene):
             if event.type == pygame.KEYDOWN:
                 # Selling controls
                 if event.key == pygame.K_1:  # Sell Twizzles
-                    self._try_sell("twizzlers", 2)  # Sell price $2
+                    self.try_sell("twizzlers", 2)  # Sell price $2
                 elif event.key == pygame.K_2:  # Sell Skizzles
-                    self._try_sell("Skizzles", 9)  # Sell price $9
+                    self.try_sell("Skizzles", 9)  # Sell price $9
                 elif event.key == pygame.K_3:  # Sell Woozers
-                    self._try_sell("woozers", 40)  # Sell price $40
+                    self.try_sell("woozers", 40)  # Sell price $40
                 
                 # Quantity controls (max 5 pieces)
                 elif event.key == pygame.K_PLUS or event.key == pygame.K_EQUALS:
                     self.sell_quantity = min(5, self.sell_quantity + 1)
                 elif event.key == pygame.K_MINUS:
                     self.sell_quantity = max(1, self.sell_quantity - 1)
+                    
+    def update(self, dt):
+        super().update(dt)
+        
+        self.update_bully_position(dt)
+        
+        # Move player
+        super().move(dt)
+        
+    def render(self, screen):
+        super().render(screen, "Lunch Break - Playground")
+        
+        self.draw_characters(screen)
+        self.draw_ui(screen)
+        self.draw_buyer_hints(screen)
+        self.draw_clock(screen)
+        self.draw_inventory(screen)
     
-    def _try_sell(self, candy_type, sell_price):
+    def try_sell(self, candy_type, sell_price):
         """Try to sell candy to a nearby buyer"""
         # Check if player is near any unsold buyer
         for buyer in self.buyers:
@@ -170,10 +187,8 @@ class playground(Scene):
                         self.num_buyers = self.save["buyers"]
                         self.save_game()
                         break
-        
-    def update(self, dt):
-        super().update(dt)
-        
+
+    def update_bully_position(self, dt):
         # Update bully movement (keep within playground bounds)
         for bully in self.bullies:
             if not bully["frozen"]:
@@ -213,13 +228,8 @@ class playground(Scene):
             else:
                 # Update frozen timer (bully stays frozen indefinitely for mercy)
                 bully["frozen_timer"] += dt
-        
-        # Move player
-        super().move(dt)
-        
-    def render(self, screen):
-        super().render(screen, "Lunch Break - Playground")
-        
+    
+    def draw_characters(self, screen):
         # Draw player (Andrew)
         andrew_rect = self.andrew_sprite.get_rect(center=self.player_pos)
         screen.blit(self.andrew_sprite, andrew_rect)
@@ -250,10 +260,8 @@ class playground(Scene):
                 frozen_text = self.small_font.render("FROZEN", True, (0, 0, 255))
                 frozen_rect = frozen_text.get_rect(center=(bully["pos"].x, bully["pos"].y - 30))
                 screen.blit(frozen_text, frozen_rect)
-        
-        # Draw improved UI (less cluttered, better formatted)
-        self._draw_ui(screen)
-        
+    
+    def draw_buyer_hints(self, screen):
         # Show nearby buyer hint
         for buyer in self.buyers:
             if not buyer["sold"]:
@@ -264,12 +272,8 @@ class playground(Scene):
                     hint_rect = hint_surface.get_rect(center=(screen.get_width() // 2, 100))
                     screen.blit(hint_surface, hint_rect)
                     break
-        
-        # Draw clock and inventory if needed
-        self.draw_clock(screen)
-        self.draw_inventory(screen)
     
-    def _draw_ui(self, screen):
+    def draw_ui(self, screen):
         """Draw the selling controls UI in a cleaner format"""
         # Create a semi-transparent background box
         ui_box = pygame.Rect(10, 50, 400, 120)
@@ -295,10 +299,4 @@ class playground(Scene):
         price_text = "Prices: $2  |  $9  |  $40"
         price_surface = self.tiny_font.render(price_text, True, (200, 200, 200))
         screen.blit(price_surface, (20, y_offset))
-        
-        y_offset += 25
-        # Inventory toggle
-        inv_text = "Press [I] for Inventory"
-        inv_surface = self.tiny_font.render(inv_text, True, (150, 200, 255))
-        screen.blit(inv_surface, (20, y_offset))
     
