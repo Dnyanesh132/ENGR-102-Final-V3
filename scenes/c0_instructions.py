@@ -68,9 +68,9 @@ class instructions_screen(Scene):
                 {
                     "title": "Menu Navigation",
                     "content": [
-                        "Mouse Cursor ➡️ Move through menu options",
-                        "Left Click ➡️ Select",
-                        "ESC ➡️  Go back / close windows"
+                        "Mouse Cursor -> Move through menu options",
+                        "Left Click -> Select",
+                        "ESC ->  Go back / close windows"
                     ]
                 },
                 {
@@ -134,8 +134,8 @@ class instructions_screen(Scene):
                 {
                     "title": "Controls",
                     "content": [
-                        "Arrow Keys/WASD → Move",
-                        "E → Talk to students",
+                        "Arrow Keys/WASD -> Move",
+                        "E -> Talk to students",
                         "Avoid the Teacher's Detection Circle (big red transparent bubble)"
                     ]
                 },
@@ -171,11 +171,11 @@ class instructions_screen(Scene):
                     "content": [
                         "Move close to a highlighted buyer",
                         "Press:",
-                        "  1 → Sell Twizzles",
-                        "  2 → Sell Skizzles",
-                        "  3 → Sell Woozers",
+                        "  1 -> Sell Twizzles",
+                        "  2 -> Sell Skizzles",
+                        "  3 -> Sell Woozers",
                         "",
-                        "+ / - → Change how many pieces you sell per deal"
+                        "+ / - -> Change how many pieces you sell per deal"
                     ]
                 },
                 {
@@ -204,7 +204,7 @@ class instructions_screen(Scene):
                     "title": "Controls",
                     "content": [
                         "Arrow keys/WASD → Move",
-                        "E → Interact with Hall Monitor & Store"
+                        "E -> Interact with Hall Monitor & Store"
                     ]
                 },
                 {
@@ -237,7 +237,7 @@ class instructions_screen(Scene):
                     "content": ["Travel home safely & buy supplies."]
                 },
                 {
-                    "title": "🎮 Mini-Game: Rhythm Walking",
+                    "title": " Mini-Game: Rhythm Walking",
                     "content": [
                         "Press Left / Right alternating",
                         "",
@@ -245,7 +245,7 @@ class instructions_screen(Scene):
                         "  20 steps if walking",
                         "  10 steps if biking",
                         "",
-                        "Mess up = Mark falls and must restart."
+                        "Mess up = Mark falls and receives a 30 second penalty, mark also has to restart."
                     ]
                 }
             ]
