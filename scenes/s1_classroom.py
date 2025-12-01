@@ -15,7 +15,7 @@ class classroom(Scene):
         # Initial player position (x, y)
         self.player_pos = pygame.math.Vector2(600, 400)
         # Collision box updated to match Andrew's new size (60 pixels tall)
-        # Changed Andrew's hitbox to be around his feet
+        # Changed Andrew's hitbox to be around his feet and centered his hitbox better around the sprite
         self.player_collision_box = pygame.Rect(self.player_pos.x + 7.5, self.player_pos.y + 30, 15, 30)
         self.player_speed = self.save["bA_speed"]
         
@@ -96,7 +96,6 @@ class classroom(Scene):
         self.catch_cooldown_timer = 0.0
         
         # Initialize collision boxes
-        # Reverted collision boxes and changed the hitbox of Andrew instead to be around his feet
         self.collision_boxes = [
             # Top wall
             pygame.Rect(0, 0, 1280, 196),
