@@ -1,29 +1,6 @@
 import pygame
 from .scene_template import Scene
 from .ui_button import Button
-#importing button class we made ^^^
-
-
-'''
-class title_screen(Scene):
-    def __init__(self):
-        super().__init__(None, "brother_a_transition")
-
-    def process_input(self, events):
-        super().process_input(events)
-        
-        for e in events:
-            if e.type == pygame.KEYDOWN:
-                self.switch_to("brother_a_transition")
-
-    def render(self, screen):
-        super().render(screen)
-        text = self.font.render("Press any key to start. Press ESC to exit game at any time.", True, (255,255,255))
-        screen.blit(text, (100,100))
-'''
-
-
-#used generative ai for this.
 
 class title_screen(Scene):
     def __init__(self):
@@ -143,9 +120,3 @@ class title_screen(Scene):
             surf = self.font.render(line, True, (255, 255, 255))
             screen.blit(surf, (box_rect.x + 40, y))
             y += 40
-
-
-#test again
-#this is another test
-#this is a test to see if github works for dnyanesh
-#github test for ateeb

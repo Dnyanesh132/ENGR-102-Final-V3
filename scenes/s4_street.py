@@ -3,30 +3,31 @@ from .scene_template import Scene
 
 class street(Scene):
     def __init__(self):
-        # Initialize the scene - 3 PM to 6 PM = 180 seconds total (3 hours)
-        # Street scene transitions when rhythm game completes, but has max duration as backup
-        super().__init__(180, "store")
-        # Check if has costco membership to determine next scene
-        if self.save.get("has_costco_membership", False):
-            self.default_next_scene = "costco"
-        
         # Initial player position (x, y)
-        self.player_pos = pygame.math.Vector2(100, 360)
-        self.player_collision_box = pygame.Rect(self.player_pos.x, self.player_pos.y, 50, 60)
-        self.player_speed = self.save.get("bB_speed", 400.0)
+        initial_pos = pygame.math.Vector2(100, 360)
+        super().__init__(180, "store", "street.png", "Andrew", initial_pos)
+
+        # Check if has costco membership to determine next scene
+        if self.save["has_costco_membership"]:
+            self.default_next_scene = "costco"
+
+        # Fonts
+        self.small_font = pygame.font.Font(None, 28)
+        self.large_font = pygame.font.Font(None, 48)
+
+        # Collision boxes
+        self.collision_boxes = [
+            pygame.Rect(-1, 0, 1, 720),  # Left wall
+            pygame.Rect(0, -1, 1280, 1),  # Top wall
+            pygame.Rect(1280, 0, 1, 720),  # Right wall
+            pygame.Rect(0, 720, 1280, 1),  # Bottom wall
+        ]
         
-        # Load Mark's sprite
-        try:
-            mark_original = pygame.image.load("assets/mark.png").convert_alpha()
-            mark_width, mark_height = mark_original.get_size()
-            mark_scale = 60 / mark_height
-            self.mark_sprite = pygame.transform.scale(mark_original, (int(mark_width * mark_scale), 60))
-        except:
-            # Fallback to guy_npc if mark.png doesn't exist
-            guy_npc_original = pygame.image.load("assets/guy_npc.png").convert_alpha()
-            guy_width, guy_height = guy_npc_original.get_size()
-            guy_scale = 60 / guy_height
-            self.mark_sprite = pygame.transform.scale(guy_npc_original, (int(guy_width * guy_scale), 60))
+        # Load Andrew's sprite
+        andrew_original = pygame.image.load("assets/mark.png").convert_alpha()
+        andrew_width, andrew_height = andrew_original.get_size()
+        andrew_scale = 60 / andrew_height
+        self.mark_sprite = pygame.transform.scale(andrew_original, (int(andrew_width * andrew_scale), 60))
         
         # Rhythm walking mini-game state
         self.in_rhythm_game = True  # Start in rhythm game
@@ -53,18 +54,6 @@ class street(Scene):
         # Check if has bicycle (affects target steps)
         if self.save.get("has_bicycle", False):
             self.rhythm_target_steps = 10  # 10 steps if biking
-        
-        # Collision boxes (road boundaries)
-        self.collision_boxes = [
-            pygame.Rect(-1, 0, 1, 720),  # Left wall
-            pygame.Rect(0, -1, 1280, 1),  # Top wall
-            pygame.Rect(1280, 0, 1, 720),  # Right wall
-            pygame.Rect(0, 720, 1280, 1),  # Bottom wall
-        ]
-        
-        # Fonts
-        self.small_font = pygame.font.Font(None, 28)
-        self.large_font = pygame.font.Font(None, 48)
         
     def process_input(self, events):
         super().process_input(events)

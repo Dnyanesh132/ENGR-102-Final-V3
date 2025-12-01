@@ -37,11 +37,6 @@ class Scene:
         self.small_font = pygame.font.Font(None, 28)
         self.tiny_font = pygame.font.Font(None, 24)
         self.collision_boxes = None
-        
-    def save_game(self):
-        """When called, saves the game data to the file "save.json".
-        """
-        save_data(self.save)
 
     def process_input(self, events):
         """This function detects and defines how input should be processed.
@@ -51,9 +46,7 @@ class Scene:
         """
         
         self.check_movement_keys(events)
-        self.check_open_inventory(events)
-        
-        
+        self.check_open_inventory(events)  
     
     def update(self, dt):
         """This function handles the game logic on what should be updated. It should move objects, animate sprites, check for collisions,
@@ -81,7 +74,21 @@ class Scene:
         self.display_screen_hints(screen)
         self.display_counters(screen)
         self.display_scene_name(screen, name_of_scene)
+    
+    def switch_to(self, next_scene_key):
+        """This function is used to change what the next scene should be. It is simple enough that it is not overloaded in the individual
+        scenes and is defined in the parent class SceneTemplate.
+
+        Parameters:
+            next_scene_key (string): The key to the next scene to switch to.
+        """
+        self.next_scene = next_scene_key
         
+    def save_game(self):
+        """When called, saves the game data to the file "save.json".
+        """
+        save_data(self.save)
+    
     def check_movement_keys(self,events):
         self.movement = pygame.math.Vector2(0, 0)
         keys = pygame.key.get_pressed()
@@ -263,12 +270,3 @@ class Scene:
         pygame.draw.rect(screen, (0, 0, 0, 180), clock_bg)
         pygame.draw.rect(screen, (255, 255, 255), clock_bg, 2)
         screen.blit(clock_surface, clock_rect)
-    
-    def switch_to(self, next_scene_key):
-        """This function is used to change what the next scene should be. It is simple enough that it is not overloaded in the individual
-        scenes and is defined in the parent class SceneTemplate.
-
-        Parameters:
-            next_scene_key (string): The key to the next scene to switch to.
-        """
-        self.next_scene = next_scene_key
