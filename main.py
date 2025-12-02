@@ -3,7 +3,7 @@ from save_manager import load_save, save_data
 
 from scenes.c1_title_screen import title_screen
 from scenes.c2_instructions import instructions_screen
-from scenes.c3_load_save import load_save
+from scenes.c3_load_save_menu import load_save_menu
 from scenes.c4_brother_a_transition import brother_a_transition
 from scenes.c5_brother_b_transition import brother_b_transition
 from scenes.c6_ending import ending
@@ -17,7 +17,7 @@ from scenes.s5b_costco import costco
 SCENES = {
     "title_screen":title_screen,
     "instructions":instructions_screen,
-    "load_save": load_save,
+    "load_save": load_save_menu,
     "brother_a_transition":brother_a_transition,
     "brother_b_transition":brother_b_transition,
     "ending":ending,

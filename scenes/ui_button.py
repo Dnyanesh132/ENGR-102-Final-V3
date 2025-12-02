@@ -1,8 +1,5 @@
 import pygame
 
-#button class
-#used generative ai
-
 class Button:
     def __init__(self, text, pos, font, base_color, hover_color):
         self.text = text
