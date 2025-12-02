@@ -1,40 +1,48 @@
 import pygame
 from .scene_template import Scene
-from save_manager import load_save
 
 class costco(Scene):
     def __init__(self):
-        # Load save first to get remaining time before calling super().__init__()
-        save_data = load_save()
-        remaining_time = save_data.get("brother_b_remaining_time", 180)
-        
-        # Initialize the scene - 3 PM to 6 PM continues (remaining time from 180 seconds total)
-        # Costco scene gets the remaining time from street scene
-        super().__init__(remaining_time, "brother_a_transition")  # After costco, show transition then go to classroom
-        
-        # Clear the remaining time flag
-        if "brother_b_remaining_time" in self.save:
-            del self.save["brother_b_remaining_time"]
-            self.save_game()
-        
         # Initial player position
-        self.player_pos = pygame.math.Vector2(200, 500)
-        self.player_collision_box = pygame.Rect(self.player_pos.x, self.player_pos.y, 50, 60)
-        self.player_speed = self.save.get("bB_speed", 400.0)
+        initial_pos = pygame.math.Vector2(200, 500)
+        super().__init__(180, "brother_a_transition", "store.jpg", "Mark", initial_pos)  # After store, show transition then go to classroom
+        
+        # Get remaining time
+        self.timer = self.save["brother_b_remaining_time"]
+        del self.save["brother_b_remaining_time"]
+        self.save_game()
+        
+        # Fonts
+        self.small_font = pygame.font.Font(None, 28)
+        self.tiny_font = pygame.font.Font(None, 24)
+        self.large_font = pygame.font.Font(None, 48)
+        
+        # Collision boxes - Costco boundaries and obstacles
+        self.collision_boxes = [
+            # Screen boundaries
+            pygame.Rect(-1, 0, 1, 720),
+            pygame.Rect(0, -1, 1280, 1),
+            pygame.Rect(1280, 0, 1, 720),
+            pygame.Rect(0, 720, 1280, 1),
+            # Costco shelves/obstacles
+            pygame.Rect(100, 300, 200, 100),   # Left shelf
+            pygame.Rect(400, 300, 200, 100),   # Middle shelf
+            pygame.Rect(700, 300, 200, 100),   # Right shelf
+            # Checkout counter (can't walk through it)
+            pygame.Rect(850, 350, 300, 100),   # Checkout counter
+            # Shop keepers (small collision boxes)
+            pygame.Rect(920, 280, 60, 60),     # Shopkeeper 1
+            pygame.Rect(1020, 280, 60, 60),    # Shopkeeper 2
+            # PS5 display
+            pygame.Rect(550, 150, 100, 100),   # PS5 display
+        ]
         
         # Load Mark's sprite
-        try:
-            mark_original = pygame.image.load("assets/mark.png").convert_alpha()
-            mark_width, mark_height = mark_original.get_size()
-            mark_scale = 60 / mark_height
-            self.mark_sprite = pygame.transform.scale(mark_original, (int(mark_width * mark_scale), 60))
-        except:
-            # Fallback to guy_npc if mark.png doesn't exist
-            guy_npc_original = pygame.image.load("assets/guy_npc.png").convert_alpha()
-            guy_width, guy_height = guy_npc_original.get_size()
-            guy_scale = 60 / guy_height
-            self.mark_sprite = pygame.transform.scale(guy_npc_original, (int(guy_width * guy_scale), 60))
-        
+        mark_original = pygame.image.load("assets/mark.png").convert_alpha()
+        mark_width, mark_height = mark_original.get_size()
+        mark_scale = 60 / mark_height
+        self.mark_sprite = pygame.transform.scale(mark_original, (int(mark_width * mark_scale), 60))
+    
         # Load shop keeper sprites (using guy_npc and girl_npc)
         guy_npc_original = pygame.image.load("assets/guy_npc.png").convert_alpha()
         guy_width, guy_height = guy_npc_original.get_size()
@@ -76,31 +84,6 @@ class costco(Scene):
         if self.save.get("has_bigger_backpack", False):
             self.max_candy_capacity = 200  # Increased with bigger backpack
         
-        # Collision boxes - Costco boundaries and obstacles
-        self.collision_boxes = [
-            # Screen boundaries
-            pygame.Rect(-1, 0, 1, 720),
-            pygame.Rect(0, -1, 1280, 1),
-            pygame.Rect(1280, 0, 1, 720),
-            pygame.Rect(0, 720, 1280, 1),
-            # Costco shelves/obstacles
-            pygame.Rect(100, 300, 200, 100),   # Left shelf
-            pygame.Rect(400, 300, 200, 100),   # Middle shelf
-            pygame.Rect(700, 300, 200, 100),   # Right shelf
-            # Checkout counter (can't walk through it)
-            pygame.Rect(850, 350, 300, 100),   # Checkout counter
-            # Shop keepers (small collision boxes)
-            pygame.Rect(920, 280, 60, 60),     # Shopkeeper 1
-            pygame.Rect(1020, 280, 60, 60),    # Shopkeeper 2
-            # PS5 display
-            pygame.Rect(550, 150, 100, 100),   # PS5 display
-        ]
-        
-        # Fonts
-        self.small_font = pygame.font.Font(None, 28)
-        self.tiny_font = pygame.font.Font(None, 24)
-        self.large_font = pygame.font.Font(None, 48)
-        
     def process_input(self, events):
         super().process_input(events)
         
@@ -128,11 +111,11 @@ class costco(Scene):
                 # Buy menu controls
                 if self.in_buy_menu:
                     if event.key == pygame.K_1:
-                        self._buy_candy("twizzlers", self.candy_prices["twizzlers"])
+                        self.buy_candy("twizzlers", self.candy_prices["twizzlers"])
                     elif event.key == pygame.K_2:
-                        self._buy_candy("Skizzles", self.candy_prices["Skizzles"])
+                        self.buy_candy("Skizzles", self.candy_prices["Skizzles"])
                     elif event.key == pygame.K_3:
-                        self._buy_candy("woozers", self.candy_prices["woozers"])
+                        self.buy_candy("woozers", self.candy_prices["woozers"])
                     elif event.key == pygame.K_PLUS or event.key == pygame.K_EQUALS:
                         self.buy_quantity = min(20, self.buy_quantity + 1)  # Can buy more in bulk
                     elif event.key == pygame.K_MINUS:
@@ -146,7 +129,7 @@ class costco(Scene):
                 # PS5 menu controls
                 if self.in_ps5_menu:
                     if event.key == pygame.K_y:
-                        self._buy_ps5()
+                        self.buy_ps5()
                     elif event.key == pygame.K_n or event.key == pygame.K_ESCAPE:
                         self.in_ps5_menu = False
                         return  # Prevent ESC from propagating
@@ -156,7 +139,7 @@ class costco(Scene):
         if self.in_buy_menu or self.in_ps5_menu:
             self.movement = pygame.math.Vector2(0, 0)
     
-    def _buy_candy(self, candy_type, price):
+    def buy_candy(self, candy_type, price):
         """Buy candy from Costco (bulk prices)"""
         total_cost = price * self.buy_quantity
         
@@ -178,7 +161,7 @@ class costco(Scene):
         self.save["candy"][candy_type] += self.buy_quantity
         self.save_game()
     
-    def _buy_ps5(self):
+    def buy_ps5(self):
         """Buy the PS5 which ends the game!"""
         if self.save.get("has_ps5", False):
             return  # Already purchased

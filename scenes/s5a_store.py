@@ -5,7 +5,7 @@ class store(Scene):
     def __init__(self):
         # Initial player position
         initial_pos = pygame.math.Vector2(200, 500)
-        super().__init__(180, "brother_a_transition", "store.jpg", "mark", initial_pos)  # After store, show transition then go to classroom
+        super().__init__(180, "brother_a_transition", "store.jpg", "Mark", initial_pos)  # After store, show transition then go to classroom
         
         # Get remaining time
         self.timer = self.save["brother_b_remaining_time"]
@@ -319,8 +319,8 @@ class store(Scene):
             screen.blit(qty_surface, qty_rect)
 
     def draw_menu_instructions(self, screen, box_x, box_y, box_w, box_h):
-         # Instructions
-            inst_text = "Press 1-3 to buy, ESC to close"
-            inst_surface = self.small_font.render(inst_text, True, (200, 200, 200))
-            inst_rect = inst_surface.get_rect(center=(box_x + box_w // 2, box_y + box_h - 30))
-            screen.blit(inst_surface, inst_rect)
+        # Instructions
+        inst_text = "Press 1-3 to buy, ESC to close"
+        inst_surface = self.small_font.render(inst_text, True, (200, 200, 200))
+        inst_rect = inst_surface.get_rect(center=(box_x + box_w // 2, box_y + box_h - 30))
+        screen.blit(inst_surface, inst_rect)
