@@ -118,10 +118,10 @@ class costco(Scene):
                         self.at_checkout = True
                         self.checkout_shopkeeper = 1
                         self.in_buy_menu = True
-                    elif dist2 < self.interaction_radius:
-                        self.at_checkout = True
-                        self.checkout_shopkeeper = 2
-                        self.in_buy_menu = True
+                 #   elif dist2 < self.interaction_radius:
+                  #      self.at_checkout = True
+                   #     self.checkout_shopkeeper = 2
+                    #    self.in_buy_menu = True
                     elif not self.in_buy_menu and not self.in_ps5_menu:
                         # Check if near PS5
                         dist_ps5 = (self.player_pos - self.ps5_pos).length()
