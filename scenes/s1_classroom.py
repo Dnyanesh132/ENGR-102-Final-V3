@@ -191,6 +191,8 @@ class classroom(Scene):
         self.draw_naughty_corner(screen)
         self.draw_inventory(screen)
         self.draw_clock(screen)
+        
+        self.display_collision_boxes(screen)
     
     def update_negotiation_timer(self, dt):
         # Update negotiation timer
@@ -219,8 +221,7 @@ class classroom(Scene):
                 self.naughty_corner_timer = 0.0
                 # Return player to a safe position
                 self.player_pos = pygame.math.Vector2(600, 400)
-                self.player_collision_box.x = self.player_pos.x
-                self.player_collision_box.y = self.player_pos.y
+                self.player_collision_box = pygame.Rect(self.player_pos.x - self.x_offset, self.player_pos.y - self.y_offset, 30, 20)
                 # Start cooldown to prevent immediate re-catching
                 self.just_caught = True
                 self.catch_cooldown_timer = 0.0

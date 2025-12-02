@@ -26,12 +26,15 @@ class Scene:
         
         self.player_pos = initial_pos
         
+        self.x_offset = 15
+        self.y_offset = -15
+        
         # Collision box and speed for respective brother
         if(brother_name == "Andrew"):
-            self.player_collision_box = pygame.Rect(self.player_pos.x + 7.5, self.player_pos.y + 30, 15, 30)
+            self.player_collision_box = pygame.Rect(self.player_pos.x - self.x_offset, self.player_pos.y - self.y_offset, 30, 20)
             self.player_speed = self.save["bA_speed"]
         elif(brother_name == "Mark"):
-            self.player_collision_box = None
+            self.player_collision_box = pygame.Rect(self.player_pos.x - self.x_offset, self.player_pos.y - self.y_offset, 30, 20)
             self.player_speed = self.save["bB_speed"]
         
         self.small_font = pygame.font.Font(None, 28)
@@ -142,7 +145,7 @@ class Scene:
                 self.player_collision_box.y = new_rect.y
 
         # Update position
-        self.player_pos.update(self.player_collision_box.x, self.player_collision_box.y)
+        self.player_pos.update(self.player_collision_box.x + self.x_offset, self.player_collision_box.y + self.y_offset)
         
     def display_background(self, screen):
         # Load background if necessary
@@ -273,3 +276,30 @@ class Scene:
         pygame.draw.rect(screen, (0, 0, 0, 180), clock_bg)
         pygame.draw.rect(screen, (255, 255, 255), clock_bg, 2)
         screen.blit(clock_surface, clock_rect)
+
+    def display_collision_boxes(self, screen):
+        """Draws all collision boxes and the player's collision box for debugging."""
+        
+        # Color for the collision boxes (e.g., translucent red)
+        COLLISION_COLOR = (255, 0, 0, 100) # (R, G, B, Alpha)
+        PLAYER_COLLISION_COLOR = (0, 255, 0, 150) # (R, G, B, Alpha)
+        
+        # Since pygame.draw.rect doesn't support drawing semi-transparent rectangles directly,
+        # we'll use a Surface with SRCALPHA for transparency.
+        
+        # Create a surface to draw collision boxes on
+        overlay = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
+        
+        # Draw all static collision boxes
+        if self.collision_boxes:
+            for box in self.collision_boxes:
+                # Use a transparent color for the static boxes
+                pygame.draw.rect(overlay, COLLISION_COLOR, box)
+                
+        # Draw the player's collision box
+        if self.player_collision_box:
+            # Use a slightly more opaque/different color for the player
+            pygame.draw.rect(overlay, PLAYER_COLLISION_COLOR, self.player_collision_box)
+            
+        # Blit the overlay onto the main screen
+        screen.blit(overlay, (0, 0))
