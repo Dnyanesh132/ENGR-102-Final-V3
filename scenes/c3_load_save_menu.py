@@ -4,6 +4,8 @@ from .scene_template import Scene
 from .ui_button import Button
 from save_manager import load_save, save_data, DEFAULT_DATA
 
+# This was pretty complicated so we used AI for this
+
 SAVE_DIR = "saves/"
 
 class load_save_menu(Scene):

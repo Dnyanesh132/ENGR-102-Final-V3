@@ -77,8 +77,8 @@ class Scene:
         
         if(tool_tips):    
             self.display_screen_hints(screen)
+            self.display_counters(screen)
             
-        self.display_counters(screen)
         self.display_scene_name(screen, name_of_scene)
     
     def switch_to(self, next_scene_key):

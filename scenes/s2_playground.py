@@ -159,6 +159,7 @@ class playground(Scene):
         self.draw_buyer_hints(screen)
         self.draw_clock(screen)
         self.draw_inventory(screen)
+        self.collision_boxes(screen)
     
     def try_sell(self, candy_type, sell_price):
         """Try to sell candy to a nearby buyer"""
