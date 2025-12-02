@@ -191,8 +191,6 @@ class classroom(Scene):
         self.draw_naughty_corner(screen)
         self.draw_inventory(screen)
         self.draw_clock(screen)
-        
-        self.display_collision_boxes(screen)
     
     def update_negotiation_timer(self, dt):
         # Update negotiation timer
