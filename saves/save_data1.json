@@ -1,19 +1,16 @@
 {
     "buyers": 0,
-    "money": 7399,
+    "money": 0,
     "candy": {
-        "twizzlers": 5,
+        "twizzlers": 14,
         "Skizzles": 0,
         "woozers": 0
     },
     "bA_speed": 400.0,
-    "bB_speed": 600.0,
-    "has_costco_membership": true,
+    "bB_speed": 400.0,
+    "has_costco_membership": false,
     "settings": {
         "fullscreen": false,
         "audio": 100
-    },
-    "has_bicycle": true,
-    "has_candy_machine": true,
-    "has_bigger_backpack": true
+    }
 }
