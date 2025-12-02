@@ -6,15 +6,15 @@ class title_screen(Scene):
     def __init__(self):
         super().__init__(None, "brother_a_transition", "title_bg.png")
 
-        # Fonts
+        ##### fonts ######
         self.title_font = pygame.font.Font(None, 120)
         self.button_font = pygame.font.Font(None, 60)
 
-        # Buttons (positions are centered)
+        #### buttons
         self.buttons = []
         self.make_buttons()
 
-        # Instruction popup
+        ###### the INSTRUCTIONS ##########
         self.show_instructions = True
         self.instruction_text = [
             "Welcome to SUGAR RUSH!",
@@ -45,23 +45,23 @@ class title_screen(Scene):
         mouse_pos = pygame.mouse.get_pos()
 
         for e in events:
-            # Close instructions popup
+            #### for closing instructions
             if self.show_instructions:
                 if e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE:
                     self.show_instructions = False
-                return  # do NOT process buttons until popup is closed
+                return  ##### buttons are only pressable after instructions popup is closed #####
 
-            # Handle quitting
+            ### if quitting
             if e.type == pygame.KEYDOWN:
                 if e.key == pygame.K_ESCAPE:
                     pygame.quit()
                     quit()
 
-            # Button clicks
+            ### button clicks ###
             for btn in self.buttons:
                 if btn.clicked(mouse_pos, e):
                     if btn == self.play_btn:
-                        # Reset save to default values for new game
+                        # reset save to default values for new game
                         from save_manager import DEFAULT_DATA, save_data
                         save_data(DEFAULT_DATA.copy())
                         self.switch_to("brother_a_transition")
@@ -84,37 +84,37 @@ class title_screen(Scene):
     def render(self, screen):
         super().render(screen, tool_tips=False)
 
-        # Title text
+        # ######### TITLE ######
         title_surf = self.title_font.render("SUGAR RUSH", True, (255, 215, 0))
         rect = title_surf.get_rect(center=(screen.get_width() // 2, 150))
         screen.blit(title_surf, rect)
 
-        # Draw buttons if not in instructions
+        ##### drawing buttons ####
         if not self.show_instructions:
             for btn in self.buttons:
                 btn.draw(screen)
 
-        # Instructions popup
+        ##### Instructions popup
         if self.show_instructions:
             self.draw_instruction_popup(screen)
 
     def draw_instruction_popup(self, screen):
         w, h = screen.get_size()
 
-        # Dim background
+        ##### dim background
         overlay = pygame.Surface((w, h))
         overlay.set_alpha(180)
         overlay.fill((0, 0, 0))
         screen.blit(overlay, (0, 0))
 
-        # Popup box
+        #### popup
         box_w, box_h = 600, 400
         box_rect = pygame.Rect((w-box_w)//2, (h-box_h)//2, box_w, box_h)
 
         pygame.draw.rect(screen, (50, 50, 50), box_rect)
         pygame.draw.rect(screen, (200, 200, 200), box_rect, 4)
 
-        # Draw text lines
+        ###### Text lines #####
         y = box_rect.y + 40
         for line in self.instruction_text:
             surf = self.font.render(line, True, (255, 255, 255))

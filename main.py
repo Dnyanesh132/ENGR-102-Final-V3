@@ -39,12 +39,12 @@ current_scene = SCENES["title_screen"]()
 
 running = True
 while running:
-    # Initialize the time step and retrive events
+    ########## initialize the time and create the variable for it #########
     dt = clock.tick(60) / 1000.0
     events = pygame.event.get()
     keys = pygame.key.get_pressed()
 
-    # Check for the QUIT event and exit the program
+    ######## check for the event "quit" and exit out if needed #########
     for event in events:
         if event.type == pygame.QUIT:
             running = False
