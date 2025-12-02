@@ -3,7 +3,7 @@ import os
 
 SAVE_PATH = "saves/save_data1.json"
 
-###### works like a dictionary in other files#####
+#works like a dictionary in other files
 DEFAULT_DATA = {
     "buyers": 0,
     "money": 0,
@@ -23,13 +23,13 @@ DEFAULT_DATA = {
 
 def load_save(save_file = None):
     """Load game data from JSON. If not found, create default."""
-    # ####chooses a different save file####
+    #chooses a different save file####
     global SAVE_PATH
     if save_file is not None:
         SAVE_PATH = f"saves/{save_file}.json"
         
     if not os.path.exists(SAVE_PATH):
-        save_data(DEFAULT_DATA)  # creates a new save file
+        save_data(DEFAULT_DATA)  #creates a new save file
         return DEFAULT_DATA.copy()
 
     with open(SAVE_PATH, "r") as f:
