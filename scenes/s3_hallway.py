@@ -279,5 +279,7 @@ class hallway(Scene):
                 elif item_name == "Bigger Backpack":
                     self.save["has_bigger_backpack"] = True
                     # Increase inventory capacity (handled elsewhere)
+                else:
+                    print("Something has gone wrong.")
                 
                 self.save_game()

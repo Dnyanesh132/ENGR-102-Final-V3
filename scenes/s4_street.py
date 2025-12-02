@@ -260,6 +260,7 @@ class street(Scene):
                     hint_text = f"NOW! Press {next_key} arrow key!"
                 else:
                     hint_text = "NOW! Press LEFT or RIGHT!"
+                    
                 hint_surface = self.large_font.render(hint_text, True, (0, 255, 0))
                 hint_rect = hint_surface.get_rect(center=(box_x + box_w // 2, box_y + 260))
                 screen.blit(hint_surface, hint_rect)

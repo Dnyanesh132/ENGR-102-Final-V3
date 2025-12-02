@@ -285,6 +285,8 @@ class playground(Scene):
                     hint_rect = hint_surface.get_rect(center=(screen.get_width() // 2, 100))
                     screen.blit(hint_surface, hint_rect)
                     break
+        else:
+            return
     
     def draw_ui(self, screen):
         """Draw the selling controls UI in a cleaner format"""
