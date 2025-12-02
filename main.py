@@ -48,8 +48,6 @@ while running:
     for event in events:
         if event.type == pygame.QUIT:
             running = False
-        # ESC is handled by scenes (for closing menus, etc.)
-        # To quit the game, use the window close button
 
     current_scene.process_input(events)
     current_scene.update(dt)
