@@ -8,7 +8,7 @@ class costco(Scene):
         super().__init__(180, "brother_a_transition", "costco.jpg", "Mark", initial_pos)  # After costco, show transition then go to classroom
         
         # Get remaining time
-        self.timer = self.save["brother_b_remaining_time"]
+        self.duration = self.save["brother_b_remaining_time"]
         del self.save["brother_b_remaining_time"]
         self.save_game()
         
@@ -47,12 +47,12 @@ class costco(Scene):
             pygame.Rect(930, 455, 170, 50),
             
             # Checkout counter (can't walk through it)
-            pygame.Rect(850, 350, 300, 100),   # Checkout counter
+            pygame.Rect(530, 350, 270, 60),   # Checkout counter
             # Shop keepers (small collision boxes)
-            pygame.Rect(920, 280, 60, 60),     # Shopkeeper (guy)
+            pygame.Rect(555, 280, 100, 110),     # Shopkeeper (guy)
             
             # PS5 display
-            pygame.Rect(550, 150, 100, 100),   # PS5 display
+            pygame.Rect(930, 100, 100, 100),   # PS5 display
         ]
         
         # Load Mark's sprite
@@ -75,7 +75,7 @@ class costco(Scene):
         #self.shopkeeper2_sprite = pygame.transform.scale(girl_npc_original, (int(girl_width * girl_scale), 70))
         
         # Shop keeper positions (behind checkout counter, not on it)
-        self.shopkeeper1_pos = pygame.math.Vector2(950, 320)  # Behind left side of checkout
+        self.shopkeeper1_pos = pygame.math.Vector2(930, 690)  # Behind left side of checkout
         #elf.shopkeeper2_pos = pygame.math.Vector2(1050, 320)  # Behind right side of checkout
         
         # Store state
@@ -232,7 +232,7 @@ class costco(Scene):
         
     def draw_checkout_area(self, screen):
         # Draw checkout area (register)
-        checkout_rect = pygame.Rect(850, 350, 300, 100)
+        checkout_rect = pygame.Rect(780, 576, 300, 50)
         pygame.draw.rect(screen, (100, 100, 100), checkout_rect)
         pygame.draw.rect(screen, (255, 255, 255), checkout_rect, 3)
         
@@ -243,7 +243,8 @@ class costco(Scene):
         
     def draw_ps5_display(self, screen):
         # Draw PS5 display
-        ps5_rect = pygame.Rect(self.ps5_pos.x - 50, self.ps5_pos.y - 50, 100, 100)
+        #ps5_rect = pygame.Rect(self.ps5_pos.x - 50, self.ps5_pos.y - 50, 100, 100)
+        ps5_rect = pygame.Rect(930, 100, 100, 100)
         pygame.draw.rect(screen, (0, 0, 0), ps5_rect)
         pygame.draw.rect(screen, (255, 255, 0), ps5_rect, 4)
         ps5_text = self.small_font.render("PS5", True, (255, 255, 255))
@@ -254,7 +255,7 @@ class costco(Scene):
         # Checkout hint
             dist1 = (self.player_pos - self.shopkeeper1_pos).length()
            # dist2 = (self.player_pos - self.shopkeeper2_pos).length()
-            if dist1 < self.interaction_radius or dist2 < self.interaction_radius:
+            if dist1 < self.interaction_radius : ##CHECK
                 hint_text = "Press E - Buy Candy (Bulk Deals!)"
                 hint_surface = self.font.render(hint_text, True, (255, 255, 0))
                 hint_rect = hint_surface.get_rect(center=(screen.get_width() // 2, 100))
@@ -343,13 +344,16 @@ class costco(Scene):
             self.dim_background(screen)
             
             # PS5 menu box
-            box_w, box_h = 600, 400
+            box_x, box_y = 930, 100
+            box_w, box_h = 100, 100
             box_x = (screen.get_width() - box_w) // 2
             box_y = (screen.get_height() - box_h) // 2
             box_rect = pygame.Rect(box_x, box_y, box_w, box_h)
-            pygame.draw.rect(screen, (30, 30, 30), box_rect)
-            pygame.draw.rect(screen, (255, 255, 0), box_rect, 5)
             
+            #drawimg box in corner
+            pygame.draw.rect(screen, (30, 30, 30), box_rect)
+            pygame.draw.rect(screen, (255, 255, 0), box_rect, 2) 
+           # pygame.Rect(930, 100, 100, 100),
             # Title
             title_text = "PLAYSTATION 5"
             title_surface = self.large_font.render(title_text, True, (255, 255, 0))
@@ -358,9 +362,13 @@ class costco(Scene):
             
             # Price
             price_text = f"Price: ${self.ps5_cost}"
-            price_surface = self.large_font.render(price_text, True, (255, 255, 255))
-            price_rect = price_surface.get_rect(center=(box_x + box_w // 2, box_y + 140))
+            price_surface = micro_font.render(price_text, True, (255, 255, 255))
+            price_rect = price_surface.get_rect(center=(box_x + box_w // 2, box_y + 35))
             screen.blit(price_surface, price_rect)
+            
+            micro_font = self.tiny_font #making font smaller
+            
+            
             
             # Current money
             money_text = f"Your Money: ${self.save['money']}"
