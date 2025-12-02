@@ -257,16 +257,14 @@ class costco(Scene):
     def draw_buy_menu(self, screen):
         # Draw buy menu
         if self.in_buy_menu:
-            # Dim background
-            overlay = pygame.Surface(screen.get_size())
-            overlay.set_alpha(180)
-            overlay.fill((0, 0, 0))
-            screen.blit(overlay, (0, 0))
+            self.dim_background(screen)
             
-            # Buy menu box
+            # Dimensions of buy menu
             box_w, box_h = 700, 500
             box_x = (screen.get_width() - box_w) // 2
             box_y = (screen.get_height() - box_h) // 2
+            
+            # Buy menu box
             box_rect = pygame.Rect(box_x, box_y, box_w, box_h)
             pygame.draw.rect(screen, (50, 50, 50), box_rect)
             pygame.draw.rect(screen, (255, 0, 0), box_rect, 4)  # Red border for Costco
@@ -321,11 +319,7 @@ class costco(Scene):
     def draw_ps5_purchase_menu(self, screen):
         # Draw PS5 purchase menu
         if self.in_ps5_menu:
-            # Dim background
-            overlay = pygame.Surface(screen.get_size())
-            overlay.set_alpha(200)
-            overlay.fill((0, 0, 0))
-            screen.blit(overlay, (0, 0))
+            self.dim_background(screen)
             
             # PS5 menu box
             box_w, box_h = 600, 400
@@ -365,3 +359,10 @@ class costco(Scene):
             buy_surface = self.font.render(buy_text, True, (255, 255, 0))
             buy_rect = buy_surface.get_rect(center=(box_x + box_w // 2, box_y + 320))
             screen.blit(buy_surface, buy_rect)
+            
+    def dim_background(self, screen):
+        # Dim background
+            overlay = pygame.Surface(screen.get_size())
+            overlay.set_alpha(180)
+            overlay.fill((0, 0, 0))
+            screen.blit(overlay, (0, 0))
