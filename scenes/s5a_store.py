@@ -149,9 +149,9 @@ class store(Scene):
             self.draw_candy_machine_hint(screen)
 
         self.draw_buy_menu(screen)
-
         self.draw_clock(screen)
         self.draw_inventory(screen)
+        self.display_collision_boxes(screen)
 
     def buy_candy(self, candy_type, price):
         """Buy candy from the store"""

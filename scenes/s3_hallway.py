@@ -10,21 +10,22 @@ class hallway(Scene):
         # Fonts
         self.small_font = pygame.font.Font(None, 28)
         self.title_font = pygame.font.Font(None, 40)
-        
+
         # Collision boxes (hallway boundaries and doors)
         self.collision_boxes = [
-            pygame.Rect(-1, 0, 1, 720),  # Left wall
-            pygame.Rect(0, -1, 1280, 1),  # Top wall
-            pygame.Rect(1280, 0, 1, 720),  # Right wall
-            pygame.Rect(0, 720, 1280, 1),  # Bottom wall
-            # Doors along the wall (approximate positions - adjust based on actual image)
-            pygame.Rect(100, 200, 60, 120),    # Brown door (left)
-            pygame.Rect(200, 200, 80, 120),    # Dark gray double doors
-            pygame.Rect(500, 200, 150, 200),   # Large roll-up door
-            pygame.Rect(700, 200, 60, 120),    # Green door
-            pygame.Rect(1000, 200, 60, 120),   # Red door (right)
-            # Hall monitor collision (if not paid)
-            # Will be added dynamically in update()
+            pygame.Rect(-1, 0, 1, 720),  # Left of screen
+            pygame.Rect(0, -1, 1280, 1),  # Top of screen
+            pygame.Rect(1280, 0, 1, 720),  # Right of screen
+            pygame.Rect(0, 720, 1280, 1),  # Bottom of screen
+
+            # Back wall Left
+            pygame.Rect(0, 0, 395, 320),
+
+            # Back wall right
+            pygame.Rect(636, 0, 644, 320),
+
+            # Barrier (gets removed later)
+            pygame.Rect(530, 0, 100, 720)
         ]
         
         # Load sprites
@@ -46,6 +47,7 @@ class hallway(Scene):
         # Hall monitor position (blocks the way)
         self.hall_monitor_pos = pygame.math.Vector2(500, 360)
         self.hall_monitor_paid = False
+        self.barrier_removed = False
         self.interaction_radius = 60
         
         # Store position (at the end of hallway)
@@ -97,40 +99,10 @@ class hallway(Scene):
     def update(self, dt):
         super().update(dt)
         
-        # Update collision boxes (hall monitor blocks path if not paid)
-        self.collision_boxes = [
-            pygame.Rect(-1, 0, 1, 720),
-            pygame.Rect(0, -1, 1280, 1),
-            pygame.Rect(1280, 0, 1, 720),
-            pygame.Rect(0, 720, 1280, 1),
-            # Doors along the wall
-            pygame.Rect(100, 200, 60, 120),    # Brown door (left)
-            pygame.Rect(200, 200, 80, 120),    # Dark gray double doors
-            pygame.Rect(500, 200, 150, 200),   # Large roll-up door
-            pygame.Rect(700, 200, 60, 120),    # Green door
-            pygame.Rect(1000, 200, 60, 120),   # Red door (right)
-        ]
-        
-        if not self.hall_monitor_paid:
-            # Add physical block - full width barrier that blocks the entire hallway
-            # Position it right in front of the hall monitor to block passage
-            barrier_width = 100  # Full screen width to block entire hallway
-            barrier_height = 720
-            barrier_box = pygame.Rect(
-                self.hall_monitor_pos.x + 30,  # Start from left edge
-                self.hall_monitor_pos.y - barrier_height // 2,
-                barrier_width,
-                barrier_height
-            )
-            self.collision_boxes.append(barrier_box)
-            
-            # Also add hall monitor as collision
-            monitor_box = pygame.Rect(
-                self.hall_monitor_pos.x - 30,
-                self.hall_monitor_pos.y - 30,
-                60, 60
-            )
-            self.collision_boxes.append(monitor_box)
+        # Remove barrier if applicable
+        if self.hall_monitor_paid and not self.barrier_removed:
+            self.collision_boxes.pop()
+            self.barrier_removed = True
         
         # Move player
         super().move(dt)
