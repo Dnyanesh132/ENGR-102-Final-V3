@@ -26,10 +26,15 @@ class playground(Scene):
             pygame.Rect(0, 630, 1280, 70),
             
             ####playground toys######
-            pygame.rect(30,250, 100, 60), #jungle
-            pygame.rect(75, 250, 100, 60), #swing
-            pygame.rect(640, 250, 100, 60), #trunk
-            pygame.rect(960, 250, 100, 60)
+            
+            #jungle
+            #swing
+            #trunk
+            #playplace
+            pygame.Rect(40,250, 180, 80), 
+            pygame.Rect(270, 250, 220, 80), 
+            pygame.Rect(570, 250, 120, 70), 
+            pygame.Rect(800, 250, 380, 75)
             
         
         ]
