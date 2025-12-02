@@ -17,7 +17,7 @@ class brother_b_transition(Scene):
                     self.switch_to("street")
     
     def render(self, screen):
-        super().render(screen)
+        super().render(screen, tool_tips=False)
         
         # Dark background
         screen.fill((0, 0, 0))

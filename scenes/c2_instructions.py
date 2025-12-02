@@ -312,7 +312,7 @@ class instructions_screen(Scene):
         return height
     
     def render(self, screen):
-        super().render(screen)
+        super().render(screen, tool_tips=False)
         
         # Scale background if needed
         if self.background:

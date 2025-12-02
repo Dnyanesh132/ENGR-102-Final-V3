@@ -82,7 +82,7 @@ class title_screen(Scene):
                 btn.update(mouse_pos)
 
     def render(self, screen):
-        super().render(screen)
+        super().render(screen, tool_tips=False)
 
         # Title text
         title_surf = self.title_font.render("SUGAR RUSH", True, (255, 215, 0))

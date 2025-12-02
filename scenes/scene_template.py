@@ -58,7 +58,7 @@ class Scene:
         
         self.update_timer(dt)
             
-    def render(self, screen, name_of_scene = None):
+    def render(self, screen, name_of_scene = None, tool_tips = True):
         """This function is what draws the whole frame to the screen. It does not handle any game logic, it purely draws the pixels to the
         screen without changing anything, completely visual.
 
@@ -71,7 +71,10 @@ class Scene:
         
         # Display main stuff
         self.display_background(screen)
-        self.display_screen_hints(screen)
+        
+        if(tool_tips):    
+            self.display_screen_hints(screen)
+            
         self.display_counters(screen)
         self.display_scene_name(screen, name_of_scene)
     
