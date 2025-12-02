@@ -25,7 +25,7 @@ class store(Scene):
             pygame.Rect(0, 600, 1280, 120),
 
             pygame.Rect(520, 445, 245, 50),
-            pygame.Rect(540, 290, 330, 55),
+            pygame.Rect(540, 200, 330, 145),
             pygame.Rect(510, 600, 245, 50),
         ]
         
@@ -167,12 +167,13 @@ class store(Scene):
 
     def draw_candy_machine(self, screen):
         # Draw candy machine
-        machine_rect = pygame.Rect(self.candy_machine_pos.x - 40, self.candy_machine_pos.y - 20, 120, 40)
-        pygame.draw.rect(screen, (150, 150, 150), machine_rect)
-        pygame.draw.rect(screen, (255, 255, 0), machine_rect, 3)
-        machine_text = self.tiny_font.render("Candy Machine", True, (0, 0, 0))
-        machine_text_rect = machine_text.get_rect(center=machine_rect.center)
-        screen.blit(machine_text, machine_text_rect)
+        machine_original = pygame.image.load("assets/candy_machine.png").convert_alpha()
+        machine_width, machine_height = machine_original.get_size()
+        machine_scale = 60 / machine_height
+        self.machine_sprite = pygame.transform.scale(machine_original, (int(machine_width * machine_scale), 60))
+
+        machine_rect = self.machine_sprite.get_rect(center=pygame.math.Vector2(self.candy_machine_pos.x - 40, self.candy_machine_pos.y - 20))
+        screen.blit(self.machine_sprite, machine_rect)
     
     def draw_checkout_hint(self, screen):
         # Checkout hint
@@ -180,7 +181,7 @@ class store(Scene):
             if dist < self.interaction_radius:
                 hint_text = "Press E - Buy Candy"
                 hint_surface = self.font.render(hint_text, True, (255, 255, 0))
-                hint_rect = hint_surface.get_rect(center=(screen.get_width() // 2, 100))
+                hint_rect = hint_surface.get_rect(center=(self.shopkeeper_pos.x, self.shopkeeper_pos.y - 60))
                 screen.blit(hint_surface, hint_rect)
 
     def draw_candy_machine_hint(self, screen):
