@@ -15,19 +15,23 @@ class playground(Scene):
         # Collision boxes (playground boundaries - fence at top, blue bar at bottom)
         self.collision_boxes = [
             # Left fence/wall
-            pygame.Rect(0, 0, 20, 720),
+            pygame.Rect(0, 0, 10, 720),
             # Right fence/wall
-            pygame.Rect(1230, 0, 51, 720),
+            pygame.Rect(1270, 0, 10, 720),
             # Top fence (keep players below fence)
-            pygame.Rect(0, 0, 1280, 300),
+            pygame.Rect(0, 0, 1280, 260),
+            
+            
             # Bottom blue bar (keep players above blue bar)
-            pygame.Rect(0, 650, 1280, 70),
-            # Playground equipment (approximate positions - adjust based on actual image)
-            #pygame.Rect(100, 200, 120, 120),   # Blue dome climber (left)
-            #pygame.Rect(250, 250, 100, 150),   # Swing set
-            #pygame.Rect(550, 300, 80, 80),     # Tree stump
-            #pygame.Rect(900, 200, 150, 200),   # Large play structure (right)
-            # Sandbox (foreground)
+            pygame.Rect(0, 630, 1280, 70),
+            
+            ####playground toys######
+            pygame.rect(30,250, 100, 60), #jungle
+            pygame.rect(75, 250, 100, 60), #swing
+            pygame.rect(640, 250, 100, 60), #trunk
+            pygame.rect(960, 250, 100, 60)
+            
+        
         ]
         
         # Load Sprites

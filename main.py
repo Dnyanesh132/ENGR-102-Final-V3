@@ -16,7 +16,7 @@ from scenes.s5b_costco import costco
 
 SCENES = {
     "title_screen":title_screen,
-    "instructions":instructions_screen,
+    "inst..uctions":instructions_screen,
     "load_save": load_save_menu,
     "brother_a_transition":brother_a_transition,
     "brother_b_transition":brother_b_transition,
