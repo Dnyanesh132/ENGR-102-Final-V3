@@ -4,7 +4,7 @@ from .scene_template import Scene
 class store(Scene):
     def __init__(self):
         # Initial player position
-        initial_pos = pygame.math.Vector2(200, 500)
+        initial_pos = pygame.math.Vector2(640, 500)
         super().__init__(180, "brother_a_transition", "store.jpg", "Mark", initial_pos)  # After store, show transition then go to classroom
         
         # Get remaining time
@@ -19,12 +19,14 @@ class store(Scene):
         # Collision boxes - store boundaries and obstacles
         self.collision_boxes = [
             # Screen boundaries
-            pygame.Rect(0, 0, 150, 720),
-            pygame.Rect(0, 0, 1280, 200),
-            pygame.Rect(1130, 0, 150, 720),
-            pygame.Rect(0, 520, 1280, 200),
+            pygame.Rect(0, 0, 280, 720),
+            pygame.Rect(0, 0, 1280, 250),
+            pygame.Rect(1000, 0, 250, 720),
+            pygame.Rect(0, 600, 1280, 120),
 
-
+            pygame.Rect(520, 445, 245, 50),
+            pygame.Rect(540, 290, 330, 55),
+            pygame.Rect(510, 600, 245, 50),
         ]
         
         # Load Mark's sprite
@@ -34,7 +36,7 @@ class store(Scene):
         self.mark_sprite = pygame.transform.scale(mark_original, (int(mark_width * mark_scale), 60))
         
         # Shop keeper position
-        self.shopkeeper_pos = pygame.math.Vector2(950, 320)  # Behind left side of checkout
+        self.shopkeeper_pos = pygame.math.Vector2(800, 300)  # Behind left side of checkout
         
         # Store state
         self.at_checkout = False
