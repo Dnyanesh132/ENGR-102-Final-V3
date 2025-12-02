@@ -5,7 +5,7 @@ class costco(Scene):
     def __init__(self):
         # Initial player position
         initial_pos = pygame.math.Vector2(200, 500)
-        super().__init__(180, "brother_a_transition", "store.jpg", "Mark", initial_pos)  # After store, show transition then go to classroom
+        super().__init__(180, "brother_a_transition", "costco.jpg", "Mark", initial_pos)  # After costco, show transition then go to classroom
         
         # Get remaining time
         self.timer = self.save["brother_b_remaining_time"]
@@ -139,6 +139,30 @@ class costco(Scene):
         if self.in_buy_menu or self.in_ps5_menu:
             self.movement = pygame.math.Vector2(0, 0)
     
+    def update(self, dt):
+        super().update(dt)
+        
+        # Only allow movement if not in menu
+        if not self.in_buy_menu and not self.in_ps5_menu:
+            super().move(dt)
+    
+    def render(self, screen):
+        super().render(screen)
+        
+        self.draw_characters(screen)
+        self.draw_checkout_area(screen)
+        self.draw_ps5_display(screen)
+        
+        # Draw interaction hints
+        if not self.in_buy_menu and not self.in_ps5_menu:
+            self.draw_checkout_hint(screen)
+            self.draw_ps5_hint(screen)
+        
+        self.draw_buy_menu(screen)
+        self.draw_ps5_purchase_menu(screen)
+        self.draw_clock(screen)
+        self.draw_inventory(screen)
+
     def buy_candy(self, candy_type, price):
         """Buy candy from Costco (bulk prices)"""
         total_cost = price * self.buy_quantity
@@ -160,7 +184,7 @@ class costco(Scene):
             self.save["candy"][candy_type] = 0
         self.save["candy"][candy_type] += self.buy_quantity
         self.save_game()
-    
+        
     def buy_ps5(self):
         """Buy the PS5 which ends the game!"""
         if self.save.get("has_ps5", False):
@@ -172,32 +196,20 @@ class costco(Scene):
             self.save_game()
             # Switch to ending scene
             self.switch_to("ending")
-    
-    def update(self, dt):
-        super().update(dt)
+            
+    def draw_characters(self, screen):
+        # Draw Mark
+        mark_rect = self.mark_sprite.get_rect(center=self.player_pos)
+        screen.blit(self.mark_sprite, mark_rect)
         
-        # Only allow movement if not in menu
-        if not self.in_buy_menu and not self.in_ps5_menu:
-            super().move(dt)
-    
-    def render(self, screen):
-        super().render(screen)
+        # Draw shop keepers at checkout
+        shopkeeper1_rect = self.shopkeeper1_sprite.get_rect(center=self.shopkeeper1_pos)
+        screen.blit(self.shopkeeper1_sprite, shopkeeper1_rect)
         
-        # Load Costco background
-        try:
-            background_image = pygame.image.load("assets/costco.jpg").convert_alpha()
-            background_image = pygame.transform.scale(background_image, screen.get_size())
-            screen.blit(background_image, (0, 0))
-        except:
-            # Fallback Costco background
-            screen.fill((200, 50, 50))  # Red Costco color
-            # Draw warehouse shelves
-            for x in range(100, 1000, 300):
-                pygame.draw.rect(screen, (100, 100, 100), (x, 300, 200, 150))
+        shopkeeper2_rect = self.shopkeeper2_sprite.get_rect(center=self.shopkeeper2_pos)
+        screen.blit(self.shopkeeper2_sprite, shopkeeper2_rect)
         
-        # Draw screen control hints
-        super().screen_hints(screen)
-        
+    def draw_checkout_area(self, screen):
         # Draw checkout area (register)
         checkout_rect = pygame.Rect(850, 350, 300, 100)
         pygame.draw.rect(screen, (100, 100, 100), checkout_rect)
@@ -208,13 +220,7 @@ class costco(Scene):
         checkout_text_rect = checkout_text.get_rect(center=checkout_rect.center)
         screen.blit(checkout_text, checkout_text_rect)
         
-        # Draw shop keepers at checkout
-        shopkeeper1_rect = self.shopkeeper1_sprite.get_rect(center=self.shopkeeper1_pos)
-        screen.blit(self.shopkeeper1_sprite, shopkeeper1_rect)
-        
-        shopkeeper2_rect = self.shopkeeper2_sprite.get_rect(center=self.shopkeeper2_pos)
-        screen.blit(self.shopkeeper2_sprite, shopkeeper2_rect)
-        
+    def draw_ps5_display(self, screen):
         # Draw PS5 display
         ps5_rect = pygame.Rect(self.ps5_pos.x - 50, self.ps5_pos.y - 50, 100, 100)
         pygame.draw.rect(screen, (0, 0, 0), ps5_rect)
@@ -222,14 +228,9 @@ class costco(Scene):
         ps5_text = self.small_font.render("PS5", True, (255, 255, 255))
         ps5_text_rect = ps5_text.get_rect(center=ps5_rect.center)
         screen.blit(ps5_text, ps5_text_rect)
-        
-        # Draw player (Mark)
-        mark_rect = self.mark_sprite.get_rect(center=self.player_pos)
-        screen.blit(self.mark_sprite, mark_rect)
-        
-        # Draw interaction hints
-        if not self.in_buy_menu and not self.in_ps5_menu:
-            # Checkout hint
+    
+    def draw_checkout_hint(self, screen):
+        # Checkout hint
             dist1 = (self.player_pos - self.shopkeeper1_pos).length()
             dist2 = (self.player_pos - self.shopkeeper2_pos).length()
             if dist1 < self.interaction_radius or dist2 < self.interaction_radius:
@@ -237,8 +238,9 @@ class costco(Scene):
                 hint_surface = self.font.render(hint_text, True, (255, 255, 0))
                 hint_rect = hint_surface.get_rect(center=(screen.get_width() // 2, 100))
                 screen.blit(hint_surface, hint_rect)
-            
-            # PS5 hint
+    
+    def draw_ps5_hint(self, screen):
+        # PS5 hint
             dist_ps5 = (self.player_pos - self.ps5_pos).length()
             if dist_ps5 < self.interaction_radius:
                 if not self.save.get("has_ps5", False):
@@ -252,6 +254,7 @@ class costco(Scene):
                     ps5_hint_rect = ps5_hint_surface.get_rect(center=(self.ps5_pos.x, self.ps5_pos.y - 80))
                     screen.blit(ps5_hint_surface, ps5_hint_rect)
         
+    def draw_buy_menu(self, screen):
         # Draw buy menu
         if self.in_buy_menu:
             # Dim background
@@ -314,7 +317,8 @@ class costco(Scene):
             inst_surface = self.small_font.render(inst_text, True, (200, 200, 200))
             inst_rect = inst_surface.get_rect(center=(box_x + box_w // 2, box_y + box_h - 30))
             screen.blit(inst_surface, inst_rect)
-        
+    
+    def draw_ps5_purchase_menu(self, screen):
         # Draw PS5 purchase menu
         if self.in_ps5_menu:
             # Dim background
@@ -361,26 +365,3 @@ class costco(Scene):
             buy_surface = self.font.render(buy_text, True, (255, 255, 0))
             buy_rect = buy_surface.get_rect(center=(box_x + box_w // 2, box_y + 320))
             screen.blit(buy_surface, buy_rect)
-        
-        # Draw countdown clock
-        time_remaining = self.duration - self.timer
-        minutes = int(time_remaining // 60)
-        seconds = int(time_remaining % 60)
-        clock_text = f"Time: {minutes:02d}:{seconds:02d}"
-        clock_surface = self.font.render(clock_text, True, (255, 255, 255))
-        clock_rect = clock_surface.get_rect(bottomright=(screen.get_width() - 20, screen.get_height() - 20))
-        clock_bg = pygame.Rect(clock_rect.x - 10, clock_rect.y - 5, clock_rect.width + 20, clock_rect.height + 10)
-        pygame.draw.rect(screen, (0, 0, 0, 180), clock_bg)
-        pygame.draw.rect(screen, (255, 255, 255), clock_bg, 2)
-        screen.blit(clock_surface, clock_rect)
-        
-        # Draw UI text
-        text = self.font.render("Costco", True, (0, 0, 0))
-        screen.blit(text, (20, 20))
-        
-        # Control hints are now drawn in base Scene class
-        
-        self.display_counters(screen)
-        
-        # Draw persistent inventory if toggled
-        self.draw_inventory(screen)
