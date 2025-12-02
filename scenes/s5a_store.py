@@ -8,7 +8,7 @@ class store(Scene):
         super().__init__(180, "brother_a_transition", "store.jpg", "Mark", initial_pos)  # After store, show transition then go to classroom
         
         # Get remaining time
-        self.timer = self.save["brother_b_remaining_time"]
+        self.duration = self.save["brother_b_remaining_time"]
         del self.save["brother_b_remaining_time"]
         self.save_game()
 
@@ -19,21 +19,12 @@ class store(Scene):
         # Collision boxes - store boundaries and obstacles
         self.collision_boxes = [
             # Screen boundaries
-            pygame.Rect(-1, 0, 1, 720),
-            pygame.Rect(0, -1, 1280, 1),
-            pygame.Rect(1280, 0, 1, 720),
-            pygame.Rect(0, 720, 1280, 1),
-            # Store shelves/obstacles
-            pygame.Rect(100, 200, 200, 100),   # Left shelf
-            pygame.Rect(400, 200, 200, 100),   # Middle shelf
-            pygame.Rect(700, 200, 200, 100),   # Right shelf
-            # Checkout counter (can't walk through it)
-            pygame.Rect(850, 350, 300, 100),   # Checkout counter
-            # Shop keepers (small collision boxes)
-            pygame.Rect(920, 280, 60, 60),     # Shopkeeper 1
-            pygame.Rect(1020, 280, 60, 60),   # Shopkeeper 2
-            # Candy machine
-            pygame.Rect(560, 260, 80, 80),     # Candy machine
+            pygame.Rect(0, 0, 150, 720),
+            pygame.Rect(0, 0, 1280, 200),
+            pygame.Rect(1130, 0, 150, 720),
+            pygame.Rect(0, 520, 1280, 200),
+
+
         ]
         
         # Load Mark's sprite
@@ -42,24 +33,11 @@ class store(Scene):
         mark_scale = 60 / mark_height
         self.mark_sprite = pygame.transform.scale(mark_original, (int(mark_width * mark_scale), 60))
         
-        # Load shop keeper sprites (using guy_npc and girl_npc)
-        guy_npc_original = pygame.image.load("assets/guy_npc.png").convert_alpha()
-        guy_width, guy_height = guy_npc_original.get_size()
-        guy_scale = 70 / guy_height
-        self.shopkeeper1_sprite = pygame.transform.scale(guy_npc_original, (int(guy_width * guy_scale), 70))
-        
-        girl_npc_original = pygame.image.load("assets/girl_npc.png").convert_alpha()
-        girl_width, girl_height = girl_npc_original.get_size()
-        girl_scale = 70 / girl_height
-        self.shopkeeper2_sprite = pygame.transform.scale(girl_npc_original, (int(girl_width * girl_scale), 70))
-        
-        # Shop keeper positions (behind checkout counter, not on it)
-        self.shopkeeper1_pos = pygame.math.Vector2(950, 320)  # Behind left side of checkout
-        self.shopkeeper2_pos = pygame.math.Vector2(1050, 320)  # Behind right side of checkout
+        # Shop keeper position
+        self.shopkeeper_pos = pygame.math.Vector2(950, 320)  # Behind left side of checkout
         
         # Store state
         self.at_checkout = False
-        self.checkout_shopkeeper = None  # Which shopkeeper (1 or 2)
         self.in_buy_menu = False
         self.buy_quantity = 1
         
@@ -90,16 +68,10 @@ class store(Scene):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_e:
                     # Check if near checkout
-                    dist1 = (self.player_pos - self.shopkeeper1_pos).length()
-                    dist2 = (self.player_pos - self.shopkeeper2_pos).length()
+                    dist = (self.player_pos - self.shopkeeper_pos).length()
                     
-                    if dist1 < self.interaction_radius:
+                    if dist < self.interaction_radius:
                         self.at_checkout = True
-                        self.checkout_shopkeeper = 1
-                        self.in_buy_menu = True
-                    elif dist2 < self.interaction_radius:
-                        self.at_checkout = True
-                        self.checkout_shopkeeper = 2
                         self.in_buy_menu = True
                     elif not self.in_buy_menu:
                         # Check if near candy machine
@@ -122,7 +94,6 @@ class store(Scene):
                     elif event.key == pygame.K_ESCAPE:
                         self.in_buy_menu = False
                         self.at_checkout = False
-                        self.checkout_shopkeeper = None
                         return  # Prevent ESC from propagating
                 # Skip time is handled in base Scene class now
         
@@ -141,7 +112,6 @@ class store(Scene):
         super().render(screen, "Store")
 
         self.draw_characters(screen)
-        self.draw_checkout_area(screen)
         self.draw_candy_machine(screen)
 
         if not self.in_buy_menu:
@@ -194,38 +164,19 @@ class store(Scene):
         mark_rect = self.mark_sprite.get_rect(center=self.player_pos)
         screen.blit(self.mark_sprite, mark_rect)
 
-        # Draw shop keepers at checkout
-        shopkeeper1_rect = self.shopkeeper1_sprite.get_rect(center=self.shopkeeper1_pos)
-        screen.blit(self.shopkeeper1_sprite, shopkeeper1_rect)
-        
-        shopkeeper2_rect = self.shopkeeper2_sprite.get_rect(center=self.shopkeeper2_pos)
-        screen.blit(self.shopkeeper2_sprite, shopkeeper2_rect)
-
-    def draw_checkout_area(self, screen):
-        # Draw checkout area (register)
-        checkout_rect = pygame.Rect(850, 350, 300, 100)
-        pygame.draw.rect(screen, (100, 100, 100), checkout_rect)
-        pygame.draw.rect(screen, (255, 255, 255), checkout_rect, 3)
-        
-        # Draw "CHECKOUT" text
-        checkout_text = self.small_font.render("CHECKOUT", True, (255, 255, 255))
-        checkout_text_rect = checkout_text.get_rect(center=checkout_rect.center)
-        screen.blit(checkout_text, checkout_text_rect)
-
     def draw_candy_machine(self, screen):
         # Draw candy machine
-        machine_rect = pygame.Rect(self.candy_machine_pos.x - 40, self.candy_machine_pos.y - 40, 80, 80)
+        machine_rect = pygame.Rect(self.candy_machine_pos.x - 40, self.candy_machine_pos.y - 20, 120, 40)
         pygame.draw.rect(screen, (150, 150, 150), machine_rect)
         pygame.draw.rect(screen, (255, 255, 0), machine_rect, 3)
-        machine_text = self.tiny_font.render("CANDY", True, (0, 0, 0))
+        machine_text = self.tiny_font.render("Candy Machine", True, (0, 0, 0))
         machine_text_rect = machine_text.get_rect(center=machine_rect.center)
         screen.blit(machine_text, machine_text_rect)
     
     def draw_checkout_hint(self, screen):
         # Checkout hint
-            dist1 = (self.player_pos - self.shopkeeper1_pos).length()
-            dist2 = (self.player_pos - self.shopkeeper2_pos).length()
-            if dist1 < self.interaction_radius or dist2 < self.interaction_radius:
+            dist = (self.player_pos - self.shopkeeper_pos).length()
+            if dist < self.interaction_radius:
                 hint_text = "Press E - Buy Candy"
                 hint_surface = self.font.render(hint_text, True, (255, 255, 0))
                 hint_rect = hint_surface.get_rect(center=(screen.get_width() // 2, 100))
