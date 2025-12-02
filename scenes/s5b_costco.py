@@ -69,14 +69,14 @@ class costco(Scene):
         
         
         #gettign rid of girl 
-        #girl_npc_original = pygame.image.load("assets/girl_npc.png").convert_alpha()
-        #girl_width, girl_height = girl_npc_original.get_size()
-        #girl_scale = 70 / girl_height
-        #self.shopkeeper2_sprite = pygame.transform.scale(girl_npc_original, (int(girl_width * girl_scale), 70))
+        girl_npc_original = pygame.image.load("assets/girl_npc.png").convert_alpha()
+        girl_width, girl_height = girl_npc_original.get_size()
+        girl_scale = 70 / girl_height
+        self.shopkeeper2_sprite = pygame.transform.scale(girl_npc_original, (int(girl_width * girl_scale), 70))
         
         # Shop keeper positions (behind checkout counter, not on it)
-        self.shopkeeper1_pos = pygame.math.Vector2(930, 690)  # Behind left side of checkout
-        #elf.shopkeeper2_pos = pygame.math.Vector2(1050, 320)  # Behind right side of checkout
+        self.shopkeeper1_pos = pygame.math.Vector2(700, 600)  # Behind left side of checkout
+        self.shopkeeper2_pos = pygame.math.Vector2(900, 158)  # Behind right side of checkout
         
         # Store state
         self.at_checkout = False
@@ -112,22 +112,22 @@ class costco(Scene):
                 if event.key == pygame.K_e:
                     # Check if near checkout
                     dist1 = (self.player_pos - self.shopkeeper1_pos).length()
-                    #dist2 = (self.player_pos - self.shopkeeper2_pos).length()
+                    dist2 = (self.player_pos - self.shopkeeper2_pos).length()
                     
                     if dist1 < self.interaction_radius:
                         self.at_checkout = True
                         self.checkout_shopkeeper = 1
                         self.in_buy_menu = True
-                 #   elif dist2 < self.interaction_radius:
-                  #      self.at_checkout = True
-                   #     self.checkout_shopkeeper = 2
-                    #    self.in_buy_menu = True
+                    elif dist2 < self.interaction_radius:
+                        self.at_checkout = True
+                        self.checkout_shopkeeper = 2
+                        self.in_buy_menu = True
                     elif not self.in_buy_menu and not self.in_ps5_menu:
                         # Check if near PS5
                         dist_ps5 = (self.player_pos - self.ps5_pos).length()
                         if dist_ps5 < self.interaction_radius:
                             self.in_ps5_menu = True
-                
+                       
                 # Buy menu controls
                 if self.in_buy_menu:
                     if event.key == pygame.K_1:
@@ -227,8 +227,8 @@ class costco(Scene):
         shopkeeper1_rect = self.shopkeeper1_sprite.get_rect(center=self.shopkeeper1_pos)
         screen.blit(self.shopkeeper1_sprite, shopkeeper1_rect)
         
-        #shopkeeper2_rect = self.shopkeeper2_sprite.get_rect(center=self.shopkeeper2_pos)
-       # screen.blit(self.shopkeeper2_sprite, shopkeeper2_rect)
+        shopkeeper2_rect = self.shopkeeper2_sprite.get_rect(center=self.shopkeeper2_pos)
+        screen.blit(self.shopkeeper2_sprite, shopkeeper2_rect)
         
     def draw_checkout_area(self, screen):
         # Draw checkout area (register)
@@ -254,13 +254,24 @@ class costco(Scene):
     def draw_checkout_hint(self, screen):
         # Checkout hint
             dist1 = (self.player_pos - self.shopkeeper1_pos).length()
-           # dist2 = (self.player_pos - self.shopkeeper2_pos).length()
-            if dist1 < self.interaction_radius : ##CHECK
+            dist2 = (self.player_pos - self.shopkeeper2_pos).length()
+            if dist1 < self.interaction_radius or dist2 < self.interaction_radius: ##CHECK
                 hint_text = "Press E - Buy Candy (Bulk Deals!)"
                 hint_surface = self.font.render(hint_text, True, (255, 255, 0))
                 hint_rect = hint_surface.get_rect(center=(screen.get_width() // 2, 100))
                 screen.blit(hint_surface, hint_rect)
-    
+            elif dist2 < self.interaction_radius:
+                self.at_checkout = True
+                self.checkout_shopkeeper = 2
+                self.in_buy_menu = True
+            elif not self.in_buy_menu and not self.in_ps5_menu:
+                dist_ps5 = (self.player_pos - self.ps5_pos).length()
+                hint_text = "Press E - Buy PS5!!" #checking if near ps5
+                hint_surface = self.font.render(hint_text, True, (255, 255, 0))
+                hint_rect = hint_surface.get_rect(center=(screen.get_width() // 2, 100))
+                
+                
+                   
     def draw_ps5_hint(self, screen):
         # PS5 hint
             dist_ps5 = (self.player_pos - self.ps5_pos).length()
