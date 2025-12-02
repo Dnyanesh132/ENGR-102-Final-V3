@@ -20,19 +20,37 @@ class costco(Scene):
         # Collision boxes - Costco boundaries and obstacles
         self.collision_boxes = [
             # Screen boundaries
-            pygame.Rect(-1, 0, 1, 720),
-            pygame.Rect(0, -1, 1280, 1),
-            pygame.Rect(1280, 0, 1, 720),
-            pygame.Rect(0, 720, 1280, 1),
+            pygame.Rect(-1, 0, 170, 720), #left boundary
+            pygame.Rect(1110, 0,160, 720 ), #right boundary
+            pygame.Rect(0, 0, 1280, 90), #top boundary
+            pygame.Rect(0, 610, 1280, 100), #bottom boundary
             # Costco shelves/obstacles
-            pygame.Rect(100, 300, 200, 100),   # Left shelf
-            pygame.Rect(400, 300, 200, 100),   # Middle shelf
-            pygame.Rect(700, 300, 200, 100),   # Right shelf
+            #pygame.Rect(178, y val, 200,35)
+            pygame.Rect(178, 100, 170, 50),   #  6 Left shelfs
+            pygame.Rect(178, 165, 170, 50), #+ 65 in y
+            pygame.Rect(178, 233, 170, 50),
+            pygame.Rect(178, 305, 170, 50),
+            pygame.Rect(178, 390, 170, 50),
+            pygame.Rect(178, 455, 170, 50),
+            
+            pygame.Rect(470, 100, 340, 50),   # Middle shelfs
+            pygame.Rect(470, 165, 340, 50),
+            pygame.Rect(470, 233, 340, 50),
+            pygame.Rect(470, 305, 340, 50),
+            pygame.Rect(470, 390, 340, 50),
+            pygame.Rect(470, 455, 340, 50),
+            
+            pygame.Rect(930, 165, 170, 50),  # Right shelfs
+            pygame.Rect(930, 233, 170, 50), 
+            pygame.Rect(930, 305, 170, 50),
+            pygame.Rect(930, 390, 170, 50),
+            pygame.Rect(930, 455, 170, 50),
+            
             # Checkout counter (can't walk through it)
             pygame.Rect(850, 350, 300, 100),   # Checkout counter
             # Shop keepers (small collision boxes)
-            pygame.Rect(920, 280, 60, 60),     # Shopkeeper 1
-            pygame.Rect(1020, 280, 60, 60),    # Shopkeeper 2
+            pygame.Rect(920, 280, 60, 60),     # Shopkeeper (guy)
+            
             # PS5 display
             pygame.Rect(550, 150, 100, 100),   # PS5 display
         ]
@@ -41,22 +59,24 @@ class costco(Scene):
         mark_original = pygame.image.load("assets/mark.png").convert_alpha()
         mark_width, mark_height = mark_original.get_size()
         mark_scale = 60 / mark_height
-        self.mark_sprite = pygame.transform.scale(mark_original, (int(mark_width * mark_scale), 60))
+        self.mark_sprite = pygame.transform.scale(mark_original, (int(mark_width * mark_scale)/60*100, 110))
     
         # Load shop keeper sprites (using guy_npc and girl_npc)
         guy_npc_original = pygame.image.load("assets/guy_npc.png").convert_alpha()
         guy_width, guy_height = guy_npc_original.get_size()
         guy_scale = 70 / guy_height
-        self.shopkeeper1_sprite = pygame.transform.scale(guy_npc_original, (int(guy_width * guy_scale), 70))
+        self.shopkeeper1_sprite = pygame.transform.scale(guy_npc_original, (int(guy_width * guy_scale) / 70 * 100, 110))
         
-        girl_npc_original = pygame.image.load("assets/girl_npc.png").convert_alpha()
-        girl_width, girl_height = girl_npc_original.get_size()
-        girl_scale = 70 / girl_height
-        self.shopkeeper2_sprite = pygame.transform.scale(girl_npc_original, (int(girl_width * girl_scale), 70))
+        
+        #gettign rid of girl 
+        #girl_npc_original = pygame.image.load("assets/girl_npc.png").convert_alpha()
+        #girl_width, girl_height = girl_npc_original.get_size()
+        #girl_scale = 70 / girl_height
+        #self.shopkeeper2_sprite = pygame.transform.scale(girl_npc_original, (int(girl_width * girl_scale), 70))
         
         # Shop keeper positions (behind checkout counter, not on it)
         self.shopkeeper1_pos = pygame.math.Vector2(950, 320)  # Behind left side of checkout
-        self.shopkeeper2_pos = pygame.math.Vector2(1050, 320)  # Behind right side of checkout
+        #elf.shopkeeper2_pos = pygame.math.Vector2(1050, 320)  # Behind right side of checkout
         
         # Store state
         self.at_checkout = False
@@ -92,16 +112,16 @@ class costco(Scene):
                 if event.key == pygame.K_e:
                     # Check if near checkout
                     dist1 = (self.player_pos - self.shopkeeper1_pos).length()
-                    dist2 = (self.player_pos - self.shopkeeper2_pos).length()
+                    #dist2 = (self.player_pos - self.shopkeeper2_pos).length()
                     
                     if dist1 < self.interaction_radius:
                         self.at_checkout = True
                         self.checkout_shopkeeper = 1
                         self.in_buy_menu = True
-                    elif dist2 < self.interaction_radius:
-                        self.at_checkout = True
-                        self.checkout_shopkeeper = 2
-                        self.in_buy_menu = True
+                 #   elif dist2 < self.interaction_radius:
+                  #      self.at_checkout = True
+                   #     self.checkout_shopkeeper = 2
+                    #    self.in_buy_menu = True
                     elif not self.in_buy_menu and not self.in_ps5_menu:
                         # Check if near PS5
                         dist_ps5 = (self.player_pos - self.ps5_pos).length()
@@ -162,6 +182,7 @@ class costco(Scene):
         self.draw_ps5_purchase_menu(screen)
         self.draw_clock(screen)
         self.draw_inventory(screen)
+        self.display_collision_boxes(screen)
 
     def buy_candy(self, candy_type, price):
         """Buy candy from Costco (bulk prices)"""
@@ -206,8 +227,8 @@ class costco(Scene):
         shopkeeper1_rect = self.shopkeeper1_sprite.get_rect(center=self.shopkeeper1_pos)
         screen.blit(self.shopkeeper1_sprite, shopkeeper1_rect)
         
-        shopkeeper2_rect = self.shopkeeper2_sprite.get_rect(center=self.shopkeeper2_pos)
-        screen.blit(self.shopkeeper2_sprite, shopkeeper2_rect)
+        #shopkeeper2_rect = self.shopkeeper2_sprite.get_rect(center=self.shopkeeper2_pos)
+       # screen.blit(self.shopkeeper2_sprite, shopkeeper2_rect)
         
     def draw_checkout_area(self, screen):
         # Draw checkout area (register)
@@ -232,7 +253,7 @@ class costco(Scene):
     def draw_checkout_hint(self, screen):
         # Checkout hint
             dist1 = (self.player_pos - self.shopkeeper1_pos).length()
-            dist2 = (self.player_pos - self.shopkeeper2_pos).length()
+           # dist2 = (self.player_pos - self.shopkeeper2_pos).length()
             if dist1 < self.interaction_radius or dist2 < self.interaction_radius:
                 hint_text = "Press E - Buy Candy (Bulk Deals!)"
                 hint_surface = self.font.render(hint_text, True, (255, 255, 0))
